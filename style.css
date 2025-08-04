@@ -1,0 +1,550 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+.container {
+    max-width: 960px;
+    margin: 30px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 40px;
+    font-size: 2.5em;
+}
+
+.section {
+    background-color: #fdfdfd;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+    color: #34495e;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e8e8e8;
+    padding-bottom: 10px;
+    font-size: 1.6em;
+}
+
+input[type="file"] {
+    display: block;
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: calc(100% - 18px);
+}
+
+button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#uploadStatus {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.photo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.photo-item {
+    width: 150px;
+    height: 150px; /* 图片本身的高度 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* 确保内容不溢出 */
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex; /* 使用 flex 布局 */
+    flex-direction: column; /* 垂直排列 */
+    justify-content: space-between; /* 图片和ID分别在顶部和底部 */
+}
+
+.photo-item img {
+    width: 100%;
+    height: calc(100% - 25px); /* 图片占据大部分空间，为ID留出约25px */
+    object-fit: cover;
+    display: block;
+}
+
+/* 调整图片 ID 的样式和位置 */
+.photo-item .photo-id-display {
+    background-color: #f8f8f8; /* 浅灰色背景 */
+    color: #555; /* 深灰色字体 */
+    margin: 0;
+    padding: 3px 5px; /* 调整内边距 */
+    font-size: 0.8em; /* 缩小字体 */
+    text-align: center;
+    white-space: nowrap; /* 不换行 */
+    overflow: hidden; /* 隐藏溢出部分 */
+    text-overflow: ellipsis; /* 显示省略号 */
+    width: 100%; /* 宽度占满 */
+    box-sizing: border-box; /* 包含 padding 和 border 在宽度内 */
+    height: 25px; /* 固定高度 */
+    display: flex; /* 使用 flex 布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+}
+
+/* 鼠标悬停时显示完整 ID */
+.photo-item .photo-id-display:hover {
+    overflow: visible; /* 允许内容溢出 */
+    white-space: normal; /* 允许换行 */
+    word-break: break-all; /* 单词内部断行 */
+    position: absolute; /* 悬停时脱离文档流，避免影响其他元素 */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8); /* 深色背景，更醒目 */
+    color: white;
+    padding: 5px;
+    font-size: 0.9em; /* 稍微放大字体 */
+    z-index: 20; /* 确保在最上层 */
+    border-radius: 0 0 8px 8px; /* 底部圆角 */
+}
+
+/* 新增：删除按钮样式 */
+.delete-photo-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    font-size: 0.8em;
+    cursor: pointer;
+    z-index: 10; /* 确保在图片上方 */
+    padding: 0; /* 移除默认内边距 */
+    margin: 0; /* 移除默认外边距 */
+}
+
+.delete-photo-btn:hover {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+
+.session-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.session-info p {
+    margin: 0;
+    margin-right: 15px;
+}
+
+.session-info strong {
+    color: #007bff;
+}
+
+.qr-code-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#qrCodeImage {
+    max-width: 250px;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.finish-btn {
+    background-color: #007bff;
+    margin-top: 20px;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+}
+
+.finish-btn:hover {
+    background-color: #0056b3;
+}
+
+/* 新增历史会话页面样式 */
+.history-link, .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.history-link:hover, .back-link:hover {
+    background-color: #0056b3;
+}
+
+#sessionTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#sessionTable th, #sessionTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+#sessionTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#sessionTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* 调整表格内按钮样式 */
+#sessionTable td button {
+    padding: 6px 12px;
+    font-size: 0.9em;
+    margin-right: 5px;
+    /* 确保删除按钮的背景色和悬停效果 */
+    background-color: #007bff; /* 默认蓝色 */
+}
+
+#sessionTable td button.delete-button-table {
+    background-color: #dc3545; /* 红色 */
+}
+
+#sessionTable td button.delete-button-table:hover {
+    background-color: #c82333;
+}
+
+/* 移除详情页的删除按钮样式，因为按钮已移走 */
+.delete-button { /* 这个选择器现在可能不再匹配任何元素，可以移除或保留 */
+    background-color: #dc3545;
+    margin-left: 10px;
+}
+
+.delete-button:hover { /* 同上 */
+    background-color: #c82333;
+}
+
+.detail-actions { /* 这个选择器现在可能不再匹配任何元素，可以移除或保留 */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#sessionListStatus {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+
+#sessionDetailSection h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #34495e;
+}
+
+#sessionDetailSection p {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+#sessionDetailSection .photo-grid {
+    margin-top: 25px;
+}
+
+#detailPhotos .photo-item {
+    border: 2px solid transparent; /* 默认透明边框 */
+}
+
+#detailPhotos .photo-item.selected {
+    border-color: #07c160; /* 选中照片的边框颜色 */
+}
+
+#detailPhotos .photo-item .selected-indicator {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #07c160;
+    color: white;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    font-size: 0.8em;
+    font-weight: bold;
+    display: none; /* 默认隐藏 */
+}
+
+#detailPhotos .photo-item.selected .selected-indicator {
+    display: block; /* 选中时显示 */
+}
+
+#backToListBtn {
+    margin-bottom: 20px;
+    background-color: #6c757d; /* 灰色 */
+}
+
+#backToListBtn:hover {
+    background-color: #5a6268;
+}
+
+/* 新增：筛选和搜索控件样式 */
+.filter-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* 允许换行 */
+    align-items: center;
+}
+
+.filter-controls input[type="text"],
+.filter-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95em;
+    flex-grow: 1; /* 允许输入框和选择框填充空间 */
+    min-width: 150px; /* 最小宽度 */
+}
+
+.filter-controls button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+.filter-controls button:hover {
+    background-color: #0056b3;
+}
+
+/* 新增：分页控件样式 */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 15px;
+}
+
+.pagination-controls button {
+    padding: 8px 15px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #5a6268;
+}
+
+.pagination-controls button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#pageInfo {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 历史会话表格列宽调整 */
+#sessionTable th:nth-child(1), #sessionTable td:nth-child(1) { width: 15%; } /* 会话ID */
+#sessionTable th:nth-child(2), #sessionTable td:nth-child(2) { width: 20%; } /* 客户姓名 */
+#sessionTable th:nth-child(3), #sessionTable td:nth-child(3) { width: 10%; } /* 照片数量 */
+#sessionTable th:nth-child(4), #sessionTable td:nth-child(4) { width: 10%; } /* 状态 */
+#sessionTable th:nth-child(5), #sessionTable td:nth-child(5) { width: 25%; } /* 创建时间 */
+#sessionTable th:nth-child(6), #sessionTable td:nth-child(6) { width: 20%; } /* 操作 */
+
+
+/* 详情页新增客户姓名显示 */
+#sessionDetailSection p span {
+    font-weight: bold;
+    color: #34495e;
+}
+
+/* 新增：追加照片区域样式 */
+.append-photos-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.append-photos-section h3 {
+    color: #34495e;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+}
+
+.append-photos-section input[type="file"] {
+    display: block;
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: calc(100% - 18px);
+}
+
+.append-photos-section button {
+    background-color: #28a745; /* 绿色 */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.append-photos-section button:hover {
+    background-color: #218838;
+}
+
+#appendUploadStatus {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 详情页新增客户姓名显示 */
+#sessionDetailSection p span {
+    font-weight: bold;
+    color: #34495e;
+}
+
+/* 新增：照片筛选器样式 */
+.photo-display-filter {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.photo-display-filter h3 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #34495e;
+}
+
+.photo-display-filter select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95em;
+    min-width: 180px;
+}
+
+/* 新增：大图预览模态框样式 */
+.modal {
+    display: none; /* 默认隐藏 */
+    position: fixed; /* 固定定位 */
+    z-index: 1000; /* 确保在最上层 */
+    padding-top: 60px; /* 距离顶部一定距离 */
+    left: 0;
+    top: 0;
+    width: 100%; /* 宽度全屏 */
+    height: 100%; /* 高度全屏 */
+    overflow: auto; /* 允许滚动 */
+    background-color: rgba(0, 0, 0, 0.9); /* 半透明黑色背景 */
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh; /* 最大高度为视口高度的90% */
+    object-fit: contain; /* 确保图片完整显示 */
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 新增：删除按钮样式 */
+.delete-button {
+    background-color: #dc3545; /* 红色 */
+    margin-left: 10px; /* 与其他按钮的间距 */
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+.detail-actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+}

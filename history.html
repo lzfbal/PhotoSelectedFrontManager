@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史选片会话</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>历史选片会话</h1>
+        <a href="index.html" class="back-link">← 返回主页</a>
+
+        <div id="sessionListSection" class="section">
+            <h2>所有会话</h2>
+            <div class="filter-controls">
+                <input type="text" id="searchInput" placeholder="搜索会话ID或客户姓名">
+                <select id="statusFilter">
+                    <option value="all">所有状态</option>
+                    <option value="draft">草稿</option>
+                    <option value="ready">待选</option>
+                    <option value="submitted">已提交</option>
+                </select>
+                <button id="applyFilterBtn">应用筛选/搜索</button>
+            </div>
+
+            <table id="sessionTable">
+                <thead>
+                    <tr>
+                        <th>会话ID</th>
+                        <th>客户姓名</th>
+                        <th>照片数量</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 会话列表将在这里动态加载，每行包含查看详情和删除按钮 -->
+                </tbody>
+            </table>
+            <p id="sessionListStatus"></p>
+
+            <div class="pagination-controls">
+                <button id="prevPageBtn" disabled>上一页</button>
+                <span id="pageInfo"></span>
+                <button id="nextPageBtn" disabled>下一页</button>
+            </div>
+        </div>
+
+        <div id="sessionDetailSection" class="section" style="display: none;">
+            <h2>会话详情: <span id="detailSessionId"></span></h2>
+            <p>客户姓名: <span id="detailCustomerName"></span></p>
+            <p>状态: <span id="detailSessionStatus"></span></p>
+            <p>照片数量: <span id="detailPhotoCount"></span></p>
+            <p>创建时间: <span id="detailCreatedAt"></span></p>
+            <button id="backToListBtn">← 返回列表</button> <!-- 详情页只保留返回按钮 -->
+
+            <!-- 追加上传照片区域 -->
+            <div class="append-photos-section">
+                <h3>追加照片到此会话</h3>
+                <input type="file" id="appendPhotoUpload" multiple accept="image/*">
+                <button id="appendUploadBtn">追加上传</button>
+                <p id="appendUploadStatus"></p>
+            </div>
+
+            <!-- 照片筛选器 -->
+            <div class="photo-display-filter">
+                <h3>照片列表</h3>
+                <select id="photoFilter">
+                    <option value="all">显示所有照片</option>
+                    <option value="selected">只显示已选照片</option>
+                    <option value="unselected">只显示未选照片</option>
+                </select>
+            </div>
+
+            <div id="detailPhotos" class="photo-grid">
+                <!-- 详情照片将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 大图预览模态框 -->
+    <div id="imageModal" class="modal">
+        <span class="close-button">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script src="history-script.js"></script>
+</body>
+</html>

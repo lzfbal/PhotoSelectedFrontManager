@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄影师选片管理后台</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>摄影师选片管理后台</h1>
+
+        <div class="section">
+            <h2>1. 上传照片</h2>
+            <input type="text" id="customerNameInput" placeholder="请输入客户姓名 (可选)">
+            <input type="file" id="photoUpload" multiple accept="image/*">
+            <button id="uploadBtn">上传照片</button>
+            <p id="uploadStatus"></p>
+        </div>
+
+        <div class="section">
+            <h2>2. 已上传照片</h2>
+            <div id="uploadedPhotos" class="photo-grid">
+                <!-- 照片将在这里动态加载 -->
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. 选片会话管理</h2>
+            <div class="session-info">
+                <p>当前选片码: <strong id="sessionIdDisplay">无</strong></p>
+                <button id="copySessionIdBtn">复制选片码</button>
+            </div>
+            <button id="generateQrCodeBtn" disabled>生成选片二维码</button>
+            <div id="qrCodeContainer" class="qr-code-container">
+                <img id="qrCodeImage" src="" alt="选片二维码" style="display: none;">
+            </div>
+            <button id="finishSessionBtn" class="finish-btn" disabled>完成本次会话</button>
+        </div>
+
+        <div class="section">
+            <h2>4. 历史会话</h2>
+            <a href="history.html" class="history-link">查看所有历史选片会话</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
