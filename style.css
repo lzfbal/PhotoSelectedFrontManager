@@ -68,17 +68,23 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s ease; /* 添加transform动画 */
     margin-right: 10px; /* 按钮之间默认间距 */
 }
 
 button:hover {
     background-color: #45a049;
+    transform: translateY(-1px); /* 悬停时略微上浮 */
+}
+
+button:active {
+    transform: translateY(0); /* 点击时恢复 */
 }
 
 button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+    transform: none; /* 禁用状态无动画 */
 }
 
 #uploadStatus {
@@ -106,6 +112,11 @@ button:disabled {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: transform 0.2s ease; /* 添加图片项的动画 */
+}
+
+.photo-item:hover {
+    transform: translateY(-3px); /* 悬停时略微上浮 */
 }
 
 .photo-item img {
@@ -166,6 +177,7 @@ button:disabled {
     z-index: 10;
     padding: 0;
     margin: 0;
+    transition: background-color 0.3s ease;
 }
 
 .delete-photo-btn:hover {
@@ -221,47 +233,81 @@ button:disabled {
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .history-link:hover, .back-link:hover {
     background-color: #0056b3;
+    transform: translateY(-1px);
+}
+.history-link:active, .back-link:active {
+    transform: translateY(0);
 }
 
+
+/* --- 移除旧的表格样式 --- */
+/*
 #sessionTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    display: block; /* 使表格可以水平滚动 */
-    overflow-x: auto; /* 启用水平滚动 */
-    white-space: nowrap; /* 防止单元格内容自动换行，配合overflow-x */
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 #sessionTable thead, #sessionTable tbody, #sessionTable th, #sessionTable td, #sessionTable tr {
-    display: table-row; /* 保持表格行结构 */
+    display: table-row;
 }
 
 #sessionTable th, #sessionTable td {
-    border: 1px solid #ddd;
-    padding: 10px;
+    border: none;
+    padding: 12px 15px;
     text-align: left;
-    white-space: normal; /* 允许单元格内部内容正常换行 */
+    white-space: normal;
+    vertical-align: middle;
 }
 
 #sessionTable th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+    background-color: #e9ecef;
+    color: #495057;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-bottom: 2px solid #dee2e6;
 }
 
+#sessionTable thead th:first-child {
+    border-top-left-radius: 8px;
+}
+#sessionTable thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+
 #sessionTable tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f8f9fa;
+}
+
+#sessionTable tr:hover {
+    background-color: #e2f0ff;
+    transition: background-color 0.2s ease;
 }
 
 #sessionTable td button {
-    padding: 6px 12px;
-    font-size: 0.9em;
-    margin-right: 5px;
-    background-color: #007bff;
+    padding: 8px 15px;
+    font-size: 0.85em;
+    margin-right: 8px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#sessionTable td button:hover {
+    transform: translateY(-1px);
 }
 
 #sessionTable td button.delete-button-table {
@@ -271,6 +317,97 @@ button:disabled {
 #sessionTable td button.delete-button-table:hover {
     background-color: #c82333;
 }
+*/
+/* --- 新增卡片列表样式 --- */
+.session-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* 响应式列，最小280px */
+    gap: 20px; /* 卡片间距 */
+    margin-top: 20px;
+}
+
+.session-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.session-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.session-card .card-title {
+    margin: 0;
+    font-size: 1.2em;
+    color: #34495e;
+    flex-grow: 1;
+}
+
+.session-card .card-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: white;
+}
+
+/* 状态颜色 */
+.session-card .card-status.status-draft {
+    background-color: #ffc107; /* 黄色 */
+}
+.session-card .card-status.status-ready {
+    background-color: #28a745; /* 绿色 */
+}
+.session-card .card-status.status-submitted {
+    background-color: #007bff; /* 蓝色 */
+}
+
+.session-card .card-body {
+    margin-bottom: 15px;
+}
+
+.session-card .card-detail-item {
+    margin: 5px 0;
+    font-size: 0.95em;
+    color: #555;
+    word-break: break-all; /* 允许长ID换行 */
+}
+
+.session-card .card-actions {
+    display: flex;
+    justify-content: flex-end; /* 按钮右对齐 */
+    gap: 10px; /* 按钮间距 */
+    margin-top: 10px;
+}
+
+.session-card .card-actions button {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    margin-right: 0; /* 覆盖默认的margin-right */
+}
+.session-card .card-actions .delete-session-btn {
+    background-color: #dc3545;
+}
+.session-card .card-actions .delete-session-btn:hover {
+    background-color: #c82333;
+}
+
 
 #sessionListStatus {
     text-align: center;
@@ -330,80 +467,103 @@ button:disabled {
     background-color: #5a6268;
 }
 
+/* --- 优化筛选和搜索控件样式 --- */
 .filter-controls {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 15px; /* 增加间距 */
+    margin-bottom: 25px; /* 增加底部间距 */
     flex-wrap: wrap;
     align-items: center;
+    padding: 15px; /* 增加内边距 */
+    background-color: #f8f9fa; /* 浅背景色 */
+    border-radius: 8px; /* 圆角 */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* 内部阴影 */
 }
 
 .filter-controls input[type="text"],
 .filter-controls select {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 0.95em;
+    padding: 10px 15px; /* 增加内边距 */
+    border: 1px solid #ced4da; /* 边框颜色 */
+    border-radius: 6px; /* 更大圆角 */
+    font-size: 1em; /* 调整字体大小 */
     flex-grow: 1;
-    min-width: 150px;
+    min-width: 180px; /* 最小宽度 */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075); /* 内部阴影 */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-controls input[type="text"]:focus,
+.filter-controls select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
 }
 
 .filter-controls button {
-    padding: 8px 15px;
+    padding: 10px 20px; /* 调整按钮内边距 */
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px; /* 更大圆角 */
     cursor: pointer;
-    font-size: 0.95em;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .filter-controls button:hover {
     background-color: #0056b3;
+    transform: translateY(-1px);
 }
 
+/* --- 优化分页控件样式 --- */
 .pagination-controls {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    gap: 15px;
-    flex-wrap: wrap; /* 允许换行 */
+    margin-top: 30px; /* 增加顶部间距 */
+    gap: 20px; /* 增加间距 */
+    flex-wrap: wrap;
 }
 
 .pagination-controls button {
-    padding: 8px 15px;
+    padding: 10px 20px; /* 调整按钮内边距 */
     background-color: #6c757d;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px; /* 更大圆角 */
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .pagination-controls button:hover:not(:disabled) {
     background-color: #5a6268;
+    transform: translateY(-1px);
 }
 
 .pagination-controls button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+    transform: none;
 }
 
 #pageInfo {
-    font-size: 1.1em;
+    font-size: 1.2em; /* 增大字体 */
     font-weight: bold;
     color: #333;
+    min-width: 150px; /* 确保有足够空间显示 */
+    text-align: center;
 }
 
-/* 历史会话表格列宽 (桌面端默认宽度，移动端会通过overflow-x滚动) */
-#sessionTable th:nth-child(1), #sessionTable td:nth-child(1) { min-width: 100px; } /* 会话ID */
-#sessionTable th:nth-child(2), #sessionTable td:nth-child(2) { min-width: 120px; } /* 客户姓名 */
-#sessionTable th:nth-child(3), #sessionTable td:nth-child(3) { min-width: 80px; } /* 照片数量 */
-#sessionTable th:nth-child(4), #sessionTable td:nth-child(4) { min-width: 80px; } /* 状态 */
-#sessionTable th:nth-child(5), #sessionTable td:nth-child(5) { min-width: 150px; } /* 创建时间 */
-#sessionTable th:nth-child(6), #sessionTable td:nth-child(6) { min-width: 150px; } /* 操作 */
-
+/* 历史会话表格列宽 (这些现在不再直接作用于表格，但保留作为参考) */
+/*
+#sessionTable th:nth-child(1), #sessionTable td:nth-child(1) { min-width: 100px; }
+#sessionTable th:nth-child(2), #sessionTable td:nth-child(2) { min-width: 120px; }
+#sessionTable th:nth-child(3), #sessionTable td:nth-child(3) { min-width: 80px; }
+#sessionTable th:nth-child(4), #sessionTable td:nth-child(4) { min-width: 80px; }
+#sessionTable th:nth-child(5), #sessionTable td:nth-child(5) { min-width: 150px; }
+#sessionTable th:nth-child(6), #sessionTable td:nth-child(6) { min-width: 150px; }
+*/
 
 #sessionDetailSection p span {
     font-weight: bold;
@@ -440,11 +600,12 @@ button:disabled {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .append-photos-section button:hover {
     background-color: #218838;
+    transform: translateY(-1px);
 }
 
 #appendUploadStatus {
@@ -461,7 +622,7 @@ button:disabled {
     margin-bottom: 20px;
     padding-top: 20px;
     border-top: 1px solid #eee;
-    flex-wrap: wrap; /* 允许换行 */
+    flex-wrap: wrap;
 }
 
 .photo-display-filter h3 {
@@ -541,6 +702,7 @@ button:disabled {
     border-radius: 5px;
     margin-top: 10px;
     overflow: hidden; /* 确保内部进度条不溢出圆角 */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 内部阴影 */
 }
 
 .progress-bar {
@@ -603,6 +765,8 @@ button:disabled {
         margin-right: 5px;
         margin-bottom: 10px; /* 增加垂直间距 */
         display: inline-block; /* 允许它们并排显示，如果空间允许 */
+        padding: 10px 15px; /* 调整按钮大小 */
+        font-size: 0.9em;
     }
 
     /* 特定按钮强制全宽 */
@@ -643,6 +807,7 @@ button:disabled {
     .filter-controls {
         flex-direction: column; /* 垂直堆叠 */
         gap: 10px;
+        padding: 10px; /* 调整内边距 */
     }
 
     .filter-controls input[type="text"],
@@ -650,7 +815,15 @@ button:disabled {
     .filter-controls button {
         width: 100%;
         margin-right: 0;
+        padding: 8px 12px; /* 调整大小 */
+        font-size: 0.9em;
     }
+
+    /* 卡片网格在平板上变为单列 */
+    .session-cards-grid {
+        grid-template-columns: 1fr; /* 单列布局 */
+    }
+
 
     .pagination-controls {
         flex-direction: column; /* 垂直堆叠 */
@@ -660,12 +833,14 @@ button:disabled {
     .pagination-controls button {
         width: 100%;
         margin-right: 0;
+        padding: 8px 15px; /* 调整大小 */
+        font-size: 0.85em;
     }
 
-    #sessionTable th, #sessionTable td {
+    /* #sessionTable th, #sessionTable td { /* 移除表格相关样式 */
         font-size: 0.9em;
         padding: 8px;
-    }
+    } */
 
     .modal-content {
         width: 95%;
@@ -747,10 +922,10 @@ button:disabled {
         font-size: 1em;
     }
 
-    #sessionTable th, #sessionTable td {
+    /* #sessionTable th, #sessionTable td { /* 移除表格相关样式 */
         font-size: 0.8em;
         padding: 6px;
-    }
+    } */
 
     .progress-bar {
         height: 18px;

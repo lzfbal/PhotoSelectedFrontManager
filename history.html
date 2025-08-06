@@ -8,10 +8,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Selection History</h1> <!-- 标题已修改 -->
+        <h1>Selection History</h1>
         <a href="index.html" class="back-link">← 返回主页</a>
 
-        <div class="section">
+        <div id="sessionListSection" class="section">
             <h2>所有会话</h2>
             <div class="filter-controls">
                 <input type="text" id="searchInput" placeholder="搜索会话ID或客户姓名">
@@ -24,21 +24,10 @@
                 <button id="applyFilterBtn">应用筛选/搜索</button>
             </div>
 
-            <table id="sessionTable">
-                <thead>
-                    <tr>
-                        <th>会话ID</th>
-                        <th>客户姓名</th>
-                        <th>照片数量</th>
-                        <th>状态</th>
-                        <th>创建时间</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- 会话列表将在这里动态加载，每行包含查看详情和删除按钮 -->
-                </tbody>
-            </table>
+            <!-- 替换表格为卡片网格容器 -->
+            <div id="sessionCardsGrid" class="session-cards-grid">
+                <!-- 会话卡片将在这里动态加载 -->
+            </div>
             <p id="sessionListStatus"></p>
 
             <div class="pagination-controls">

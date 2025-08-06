@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.107.129.145/api';
 
     const sessionListSection = document.getElementById('sessionListSection');
-    const sessionTableBody = document.getElementById('sessionTable').getElementsByTagName('tbody')[0];
+    // const sessionTableBody = document.getElementById('sessionTable').getElementsByTagName('tbody')[0]; // 移除此行
+    const sessionCardsGrid = document.getElementById('sessionCardsGrid'); // 新增：卡片网格容器
     const sessionListStatus = document.getElementById('sessionListStatus');
 
     const searchInput = document.getElementById('searchInput');
@@ -53,9 +54,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 辅助函数 ---
     function showSection(sectionId) {
+        console.log(`尝试显示区域: ${sectionId}`); // Debug: 确认函数被调用
         sessionListSection.style.display = 'none';
         sessionDetailSection.style.display = 'none';
-        document.getElementById(sectionId).style.display = 'block';
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.style.display = 'block';
+            console.log(`区域 ${sectionId} 已显示。`); // Debug: 确认区域成功显示
+        } else {
+            console.error(`错误：未找到ID为 ${sectionId} 的区域！`); // Debug: 区域未找到
+        }
     }
 
     function formatDate(isoString) {
@@ -102,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 加载会话列表 ---
     async function loadSessionList() {
         sessionListStatus.textContent = '加载中...';
-        sessionTableBody.innerHTML = '';
+        sessionCardsGrid.innerHTML = ''; // 清空卡片容器
 
         const status = statusFilter.value;
         const search = searchInput.value.trim();
@@ -120,26 +128,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.code === 0 && data.sessions.length > 0) {
                 data.sessions.forEach(session => {
-                    const row = sessionTableBody.insertRow();
-                    row.insertCell().textContent = truncateId(session.id); // 显示截断的会话ID
-                    row.insertCell().textContent = session.customerName || '未知客户';
-                    row.insertCell().textContent = session.photoCount;
-                    row.insertCell().textContent = session.status;
-                    row.insertCell().textContent = formatDate(session.createdAt);
-                    const actionCell = row.insertCell();
+                    const sessionCard = document.createElement('div');
+                    sessionCard.className = 'session-card'; // 添加卡片样式类
 
-                    // 查看详情按钮
-                    const viewBtn = document.createElement('button');
-                    viewBtn.textContent = '查看详情';
-                    viewBtn.onclick = () => viewSessionDetail(session.id);
-                    actionCell.appendChild(viewBtn);
+                    sessionCard.innerHTML = `
+                        <div class="card-header">
+                            <h3 class="card-title">客户: ${session.customerName || '未知客户'}</h3>
+                            <span class="card-status status-${session.status}">${session.status}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-detail-item"><strong>会话ID:</strong> <span title="${session.id}">${truncateId(session.id, 12)}</span></p>
+                            <p class="card-detail-item"><strong>照片数量:</strong> ${session.photoCount}</p>
+                            <p class="card-detail-item"><strong>创建时间:</strong> ${formatDate(session.createdAt)}</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="view-detail-btn" data-session-id="${session.id}">查看详情</button>
+                            <button class="delete-session-btn" data-session-id="${session.id}">删除</button>
+                        </div>
+                    `;
 
-                    // 删除按钮
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.textContent = '删除';
-                    deleteBtn.classList.add('delete-button-table'); // 添加样式类
-                    deleteBtn.onclick = () => deleteSession(session.id); // 绑定删除事件
-                    actionCell.appendChild(deleteBtn);
+                    // 为按钮添加事件监听器
+                    sessionCard.querySelector('.view-detail-btn').addEventListener('click', () => viewSessionDetail(session.id));
+                    sessionCard.querySelector('.delete-session-btn').addEventListener('click', () => deleteSession(session.id));
+
+                    sessionCardsGrid.appendChild(sessionCard);
                 });
                 sessionListStatus.textContent = '';
             } else {
@@ -161,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 查看会话详情 ---
     async function viewSessionDetail(sessionId) {
+        console.log(`点击查看详情按钮，会话ID: ${sessionId}`);
         showSection('sessionDetailSection');
         currentDetailSessionId = sessionId;
         detailCustomerName.textContent = '加载中...';
@@ -174,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         photoFilter.value = 'all'; // 重置照片筛选器
 
         try {
+            console.log(`开始请求会话详情和照片数据 for sessionId: ${sessionId}`);
             const sessionListResponse = await fetch(`${BACKEND_URL}/sessions?search=${sessionId}&limit=1`);
             const sessionListData = await sessionListResponse.json();
             const currentSession = sessionListData.sessions[0];
@@ -183,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 detailSessionStatus.textContent = currentSession.status;
                 detailPhotoCount.textContent = currentSession.photoCount;
                 detailCreatedAt.textContent = formatDate(currentSession.createdAt);
+                console.log('会话基本信息加载成功。');
+            } else {
+                console.warn(`未找到会话 ${sessionId} 的基本信息。`);
             }
 
             const photosResponse = await fetch(`${BACKEND_URL}/photos?sessionId=${sessionId}`, {
@@ -193,11 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const photosData = await photosResponse.json();
 
             if (photosData.code === 0 && photosData.photos.length > 0) {
-                currentPhotosData = photosData.photos; // 存储原始照片数据
-                applyPhotoFilter(); // 初始渲染时应用筛选
+                currentPhotosData = photosData.photos;
+                applyPhotoFilter();
+                console.log('照片数据加载成功。');
             } else {
                 currentPhotosData = [];
                 detailPhotosContainer.textContent = '该会话没有照片。';
+                console.warn('会话没有照片或获取照片失败。');
             }
         } catch (error) {
             console.error('加载会话详情失败:', error);
@@ -329,7 +348,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 禁用所有删除按钮，防止重复点击
-        document.querySelectorAll('.delete-button-table').forEach(btn => btn.disabled = true);
+        // 由于现在是卡片，需要找到所有删除按钮，或者重新加载列表后自然恢复
+        // 这里暂时不禁用，因为删除后会立即刷新列表
+        // document.querySelectorAll('.delete-button-table').forEach(btn => btn.disabled = true);
         sessionListStatus.textContent = `删除会话 ${sessionIdToDelete} 中...`;
 
         try {
@@ -351,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionListStatus.textContent = '网络错误或服务器无响应';
         } finally {
             // 重新启用所有删除按钮（在 loadSessionList 重新渲染后也会自动启用）
-            document.querySelectorAll('.delete-button-table').forEach(btn => btn.disabled = false);
+            // document.querySelectorAll('.delete-button-table').forEach(btn => btn.disabled = false);
         }
     }
 
