@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>历史选片会话</title>
+    <title>Selection History</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>历史选片会话</h1>
+        <h1>Selection History</h1> <!-- 标题已修改 -->
         <a href="index.html" class="back-link">← 返回主页</a>
 
-        <div id="sessionListSection" class="section">
+        <div class="section">
             <h2>所有会话</h2>
             <div class="filter-controls">
                 <input type="text" id="searchInput" placeholder="搜索会话ID或客户姓名">
@@ -49,22 +49,25 @@
         </div>
 
         <div id="sessionDetailSection" class="section" style="display: none;">
-            <h2>会话详情: <span id="detailSessionId"></span></h2>
+            <h2>会话详情</h2>
             <p>客户姓名: <span id="detailCustomerName"></span></p>
             <p>状态: <span id="detailSessionStatus"></span></p>
             <p>照片数量: <span id="detailPhotoCount"></span></p>
             <p>创建时间: <span id="detailCreatedAt"></span></p>
-            <button id="backToListBtn">← 返回列表</button> <!-- 详情页只保留返回按钮 -->
+            <button id="backToListBtn">← 返回列表</button>
 
-            <!-- 追加上传照片区域 -->
             <div class="append-photos-section">
                 <h3>追加照片到此会话</h3>
                 <input type="file" id="appendPhotoUpload" multiple accept="image/*">
                 <button id="appendUploadBtn">追加上传</button>
                 <p id="appendUploadStatus"></p>
+                <div id="appendProgressBarContainer" class="progress-bar-container" style="display: none;">
+                    <div id="appendProgressBar" class="progress-bar">
+                        <span id="appendProgressText">0%</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- 照片筛选器 -->
             <div class="photo-display-filter">
                 <h3>照片列表</h3>
                 <select id="photoFilter">
@@ -80,7 +83,6 @@
         </div>
     </div>
 
-    <!-- 大图预览模态框 -->
     <div id="imageModal" class="modal">
         <span class="close-button">&times;</span>
         <img class="modal-content" id="modalImage">

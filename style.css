@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-    max-width: 960px;
+    max-width: 960px; /* 限制内容最大宽度，在宽屏上居中 */
     margin: 30px auto;
     background-color: #ffffff;
     padding: 30px;
@@ -40,15 +40,26 @@ h2 {
     font-size: 1.6em;
 }
 
-input[type="file"] {
+/* 默认输入框和选择框样式 (适用于桌面及以上) */
+input[type="text"],
+input[type="file"],
+select {
     display: block;
     margin-bottom: 15px;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    width: calc(100% - 18px);
+    width: calc(100% - 18px); /* 默认占据父容器宽度 */
+    box-sizing: border-box;
 }
 
+/* 桌面端客户姓名输入框宽度优化 */
+#customerNameInput {
+    max-width: 300px; /* 限制桌面端宽度，避免过长 */
+}
+
+
+/* 默认按钮样式 (适用于桌面及以上) */
 button {
     background-color: #4CAF50; /* Green */
     color: white;
@@ -58,7 +69,7 @@ button {
     cursor: pointer;
     font-size: 1em;
     transition: background-color 0.3s ease;
-    margin-right: 10px;
+    margin-right: 10px; /* 按钮之间默认间距 */
 }
 
 button:hover {
@@ -81,65 +92,63 @@ button:disabled {
     flex-wrap: wrap;
     gap: 15px;
     margin-top: 20px;
+    justify-content: center; /* 在桌面端也居中对齐图片 */
 }
 
 .photo-item {
-    width: 150px;
-    height: 150px; /* 图片本身的高度 */
+    width: 150px; /* 桌面端图片固定宽度 */
+    height: 150px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    overflow: hidden; /* 确保内容不溢出 */
+    overflow: hidden;
     position: relative;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    display: flex; /* 使用 flex 布局 */
-    flex-direction: column; /* 垂直排列 */
-    justify-content: space-between; /* 图片和ID分别在顶部和底部 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .photo-item img {
     width: 100%;
-    height: calc(100% - 25px); /* 图片占据大部分空间，为ID留出约25px */
+    height: calc(100% - 25px);
     object-fit: cover;
     display: block;
 }
 
-/* 调整图片 ID 的样式和位置 */
 .photo-item .photo-id-display {
-    background-color: #f8f8f8; /* 浅灰色背景 */
-    color: #555; /* 深灰色字体 */
+    background-color: #f8f8f8;
+    color: #555;
     margin: 0;
-    padding: 3px 5px; /* 调整内边距 */
-    font-size: 0.8em; /* 缩小字体 */
+    padding: 3px 5px;
+    font-size: 0.8em;
     text-align: center;
-    white-space: nowrap; /* 不换行 */
-    overflow: hidden; /* 隐藏溢出部分 */
-    text-overflow: ellipsis; /* 显示省略号 */
-    width: 100%; /* 宽度占满 */
-    box-sizing: border-box; /* 包含 padding 和 border 在宽度内 */
-    height: 25px; /* 固定高度 */
-    display: flex; /* 使用 flex 布局 */
-    align-items: center; /* 垂直居中 */
-    justify-content: center; /* 水平居中 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    box-sizing: border-box;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* 鼠标悬停时显示完整 ID */
 .photo-item .photo-id-display:hover {
-    overflow: visible; /* 允许内容溢出 */
-    white-space: normal; /* 允许换行 */
-    word-break: break-all; /* 单词内部断行 */
-    position: absolute; /* 悬停时脱离文档流，避免影响其他元素 */
+    overflow: visible;
+    white-space: normal;
+    word-break: break-all;
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.8); /* 深色背景，更醒目 */
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 5px;
-    font-size: 0.9em; /* 稍微放大字体 */
-    z-index: 20; /* 确保在最上层 */
-    border-radius: 0 0 8px 8px; /* 底部圆角 */
+    font-size: 0.9em;
+    z-index: 20;
+    border-radius: 0 0 8px 8px;
 }
 
-/* 新增：删除按钮样式 */
 .delete-photo-btn {
     position: absolute;
     top: 5px;
@@ -154,15 +163,14 @@ button:disabled {
     text-align: center;
     font-size: 0.8em;
     cursor: pointer;
-    z-index: 10; /* 确保在图片上方 */
-    padding: 0; /* 移除默认内边距 */
-    margin: 0; /* 移除默认外边距 */
+    z-index: 10;
+    padding: 0;
+    margin: 0;
 }
 
 .delete-photo-btn:hover {
     background-color: rgba(255, 0, 0, 1);
 }
-
 
 .session-info {
     display: flex;
@@ -195,7 +203,7 @@ button:disabled {
 .finish-btn {
     background-color: #007bff;
     margin-top: 20px;
-    width: 100%;
+    width: 100%; /* 默认全宽 */
     padding: 15px;
     font-size: 1.1em;
 }
@@ -204,7 +212,6 @@ button:disabled {
     background-color: #0056b3;
 }
 
-/* 新增历史会话页面样式 */
 .history-link, .back-link {
     display: block;
     text-align: center;
@@ -225,12 +232,20 @@ button:disabled {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    display: block; /* 使表格可以水平滚动 */
+    overflow-x: auto; /* 启用水平滚动 */
+    white-space: nowrap; /* 防止单元格内容自动换行，配合overflow-x */
+}
+
+#sessionTable thead, #sessionTable tbody, #sessionTable th, #sessionTable td, #sessionTable tr {
+    display: table-row; /* 保持表格行结构 */
 }
 
 #sessionTable th, #sessionTable td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
+    white-space: normal; /* 允许单元格内部内容正常换行 */
 }
 
 #sessionTable th {
@@ -242,38 +257,19 @@ button:disabled {
     background-color: #f9f9f9;
 }
 
-/* 调整表格内按钮样式 */
 #sessionTable td button {
     padding: 6px 12px;
     font-size: 0.9em;
     margin-right: 5px;
-    /* 确保删除按钮的背景色和悬停效果 */
-    background-color: #007bff; /* 默认蓝色 */
+    background-color: #007bff;
 }
 
 #sessionTable td button.delete-button-table {
-    background-color: #dc3545; /* 红色 */
+    background-color: #dc3545;
 }
 
 #sessionTable td button.delete-button-table:hover {
     background-color: #c82333;
-}
-
-/* 移除详情页的删除按钮样式，因为按钮已移走 */
-.delete-button { /* 这个选择器现在可能不再匹配任何元素，可以移除或保留 */
-    background-color: #dc3545;
-    margin-left: 10px;
-}
-
-.delete-button:hover { /* 同上 */
-    background-color: #c82333;
-}
-
-.detail-actions { /* 这个选择器现在可能不再匹配任何元素，可以移除或保留 */
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top: 20px;
 }
 
 #sessionListStatus {
@@ -298,11 +294,11 @@ button:disabled {
 }
 
 #detailPhotos .photo-item {
-    border: 2px solid transparent; /* 默认透明边框 */
+    border: 2px solid transparent;
 }
 
 #detailPhotos .photo-item.selected {
-    border-color: #07c160; /* 选中照片的边框颜色 */
+    border-color: #07c160;
 }
 
 #detailPhotos .photo-item .selected-indicator {
@@ -318,28 +314,27 @@ button:disabled {
     text-align: center;
     font-size: 0.8em;
     font-weight: bold;
-    display: none; /* 默认隐藏 */
+    display: none;
 }
 
 #detailPhotos .photo-item.selected .selected-indicator {
-    display: block; /* 选中时显示 */
+    display: block;
 }
 
 #backToListBtn {
     margin-bottom: 20px;
-    background-color: #6c757d; /* 灰色 */
+    background-color: #6c757d;
 }
 
 #backToListBtn:hover {
     background-color: #5a6268;
 }
 
-/* 新增：筛选和搜索控件样式 */
 .filter-controls {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    flex-wrap: wrap; /* 允许换行 */
+    flex-wrap: wrap;
     align-items: center;
 }
 
@@ -349,8 +344,8 @@ button:disabled {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 0.95em;
-    flex-grow: 1; /* 允许输入框和选择框填充空间 */
-    min-width: 150px; /* 最小宽度 */
+    flex-grow: 1;
+    min-width: 150px;
 }
 
 .filter-controls button {
@@ -367,13 +362,13 @@ button:disabled {
     background-color: #0056b3;
 }
 
-/* 新增：分页控件样式 */
 .pagination-controls {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
     gap: 15px;
+    flex-wrap: wrap; /* 允许换行 */
 }
 
 .pagination-controls button {
@@ -401,22 +396,20 @@ button:disabled {
     color: #333;
 }
 
-/* 历史会话表格列宽调整 */
-#sessionTable th:nth-child(1), #sessionTable td:nth-child(1) { width: 15%; } /* 会话ID */
-#sessionTable th:nth-child(2), #sessionTable td:nth-child(2) { width: 20%; } /* 客户姓名 */
-#sessionTable th:nth-child(3), #sessionTable td:nth-child(3) { width: 10%; } /* 照片数量 */
-#sessionTable th:nth-child(4), #sessionTable td:nth-child(4) { width: 10%; } /* 状态 */
-#sessionTable th:nth-child(5), #sessionTable td:nth-child(5) { width: 25%; } /* 创建时间 */
-#sessionTable th:nth-child(6), #sessionTable td:nth-child(6) { width: 20%; } /* 操作 */
+/* 历史会话表格列宽 (桌面端默认宽度，移动端会通过overflow-x滚动) */
+#sessionTable th:nth-child(1), #sessionTable td:nth-child(1) { min-width: 100px; } /* 会话ID */
+#sessionTable th:nth-child(2), #sessionTable td:nth-child(2) { min-width: 120px; } /* 客户姓名 */
+#sessionTable th:nth-child(3), #sessionTable td:nth-child(3) { min-width: 80px; } /* 照片数量 */
+#sessionTable th:nth-child(4), #sessionTable td:nth-child(4) { min-width: 80px; } /* 状态 */
+#sessionTable th:nth-child(5), #sessionTable td:nth-child(5) { min-width: 150px; } /* 创建时间 */
+#sessionTable th:nth-child(6), #sessionTable td:nth-child(6) { min-width: 150px; } /* 操作 */
 
 
-/* 详情页新增客户姓名显示 */
 #sessionDetailSection p span {
     font-weight: bold;
     color: #34495e;
 }
 
-/* 新增：追加照片区域样式 */
 .append-photos-section {
     margin-top: 30px;
     padding-top: 20px;
@@ -440,7 +433,7 @@ button:disabled {
 }
 
 .append-photos-section button {
-    background-color: #28a745; /* 绿色 */
+    background-color: #28a745;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -460,13 +453,6 @@ button:disabled {
     color: #333;
 }
 
-/* 详情页新增客户姓名显示 */
-#sessionDetailSection p span {
-    font-weight: bold;
-    color: #34495e;
-}
-
-/* 新增：照片筛选器样式 */
 .photo-display-filter {
     display: flex;
     align-items: center;
@@ -475,6 +461,7 @@ button:disabled {
     margin-bottom: 20px;
     padding-top: 20px;
     border-top: 1px solid #eee;
+    flex-wrap: wrap; /* 允许换行 */
 }
 
 .photo-display-filter h3 {
@@ -491,18 +478,17 @@ button:disabled {
     min-width: 180px;
 }
 
-/* 新增：大图预览模态框样式 */
 .modal {
-    display: none; /* 默认隐藏 */
-    position: fixed; /* 固定定位 */
-    z-index: 1000; /* 确保在最上层 */
-    padding-top: 60px; /* 距离顶部一定距离 */
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
     left: 0;
     top: 0;
-    width: 100%; /* 宽度全屏 */
-    height: 100%; /* 高度全屏 */
-    overflow: auto; /* 允许滚动 */
-    background-color: rgba(0, 0, 0, 0.9); /* 半透明黑色背景 */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
 .modal-content {
@@ -510,8 +496,8 @@ button:disabled {
     display: block;
     width: 80%;
     max-width: 800px;
-    max-height: 90vh; /* 最大高度为视口高度的90% */
-    object-fit: contain; /* 确保图片完整显示 */
+    max-height: 90vh;
+    object-fit: contain;
 }
 
 .close-button {
@@ -532,10 +518,9 @@ button:disabled {
     cursor: pointer;
 }
 
-/* 新增：删除按钮样式 */
 .delete-button {
-    background-color: #dc3545; /* 红色 */
-    margin-left: 10px; /* 与其他按钮的间距 */
+    background-color: #dc3545;
+    margin-left: 10px;
 }
 
 .delete-button:hover {
@@ -547,4 +532,229 @@ button:disabled {
     justify-content: flex-start;
     align-items: center;
     margin-top: 20px;
+}
+
+/* Progress Bar Styles */
+.progress-bar-container {
+    width: 100%;
+    background-color: #e0e0e0; /* 进度条背景色 */
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden; /* 确保内部进度条不溢出圆角 */
+}
+
+.progress-bar {
+    width: 0%; /* 初始宽度为0 */
+    height: 25px; /* 进度条高度 */
+    background-color: #4CAF50; /* 进度条填充色 */
+    border-radius: 5px;
+    text-align: center;
+    line-height: 25px; /* 使文本垂直居中 */
+    color: white;
+    font-weight: bold;
+    font-size: 0.9em;
+    transition: width 0.3s ease-in-out; /* 平滑过渡动画 */
+    white-space: nowrap; /* 防止百分比文本换行 */
+}
+
+.progress-bar span {
+    /* 混合模式确保文本在背景色变化时始终可见 */
+    mix-blend-mode: difference;
+}
+
+
+/* --- 响应式调整 (Mobile-First Overrides) --- */
+
+/* 适用于屏幕宽度小于或等于 768px 的设备 (平板和更小尺寸) */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 30px;
+    }
+
+    h2 {
+        font-size: 1.4em;
+        margin-bottom: 15px;
+    }
+
+    .section {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    /* 客户姓名输入框在小屏幕上恢复全宽 */
+    #customerNameInput {
+        max-width: 100%;
+    }
+
+    /* 按钮在小屏幕上堆叠，并取消右侧间距 */
+    button {
+        width: auto; /* 恢复默认宽度 */
+        margin-right: 5px;
+        margin-bottom: 10px; /* 增加垂直间距 */
+        display: inline-block; /* 允许它们并排显示，如果空间允许 */
+    }
+
+    /* 特定按钮强制全宽 */
+    .finish-btn,
+    .history-link,
+    .back-link,
+    .append-photos-section button { /* 追加上传按钮也全宽 */
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .photo-grid {
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .photo-item {
+        width: calc(50% - 10px); /* 两列布局，考虑间距 */
+        height: auto; /* 高度自适应 */
+        min-width: 120px; /* 防止图片过小 */
+    }
+
+    .photo-item img {
+        height: 120px; /* 图片部分固定高度 */
+    }
+
+    .session-info {
+        flex-direction: column; /* 垂直堆叠 */
+        align-items: flex-start;
+    }
+
+    .session-info p {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    .filter-controls {
+        flex-direction: column; /* 垂直堆叠 */
+        gap: 10px;
+    }
+
+    .filter-controls input[type="text"],
+    .filter-controls select,
+    .filter-controls button {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .pagination-controls {
+        flex-direction: column; /* 垂直堆叠 */
+        gap: 10px;
+    }
+
+    .pagination-controls button {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    #sessionTable th, #sessionTable td {
+        font-size: 0.9em;
+        padding: 8px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+    }
+
+    .close-button {
+        top: 10px;
+        right: 15px;
+        font-size: 30px;
+    }
+
+    .photo-display-filter {
+        flex-direction: column; /* 垂直堆叠 */
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .photo-display-filter h3,
+    .photo-display-filter select {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .progress-bar {
+        height: 20px;
+        line-height: 20px;
+        font-size: 0.8em;
+    }
+}
+
+/* 适用于屏幕宽度小于或等于 480px 的设备 (智能手机) */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        margin: 15px auto;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+
+    .section {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    /* 确保所有按钮在超小屏幕上都全宽 */
+    button {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .photo-item {
+        width: 100%; /* 单列布局 */
+        max-width: 300px; /* 限制单列图片的宽度，避免过宽 */
+        height: auto;
+    }
+
+    .photo-item img {
+        height: 200px; /* 单列时图片高度稍大 */
+    }
+
+    .delete-photo-btn {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 1em;
+    }
+
+    #sessionTable th, #sessionTable td {
+        font-size: 0.8em;
+        padding: 6px;
+    }
+
+    .progress-bar {
+        height: 18px;
+        line-height: 18px;
+        font-size: 0.75em;
+    }
 }

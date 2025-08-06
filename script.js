@@ -1,18 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 将 BACKEND_URL 修改为您的服务器公网 IP 地址和 Nginx 代理的 API 路径
-    // const BACKEND_URL = 'http://localhost:3000';
-    const BACKEND_URL = 'http://47.107.129.145/api'; // <--- 修改这里
+    // ====================================================================
+    // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
+    const DEBUG_MODE = true; // <--- 修改这里来切换调试模式
+    // ====================================================================
+
+    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.107.129.145/api';
 
     const customerNameInput = document.getElementById('customerNameInput');
     const photoUpload = document.getElementById('photoUpload');
     const uploadBtn = document.getElementById('uploadBtn');
     const uploadStatus = document.getElementById('uploadStatus');
     const uploadedPhotosContainer = document.getElementById('uploadedPhotos');
-    const sessionIdDisplay = document.getElementById('sessionIdDisplay');
-    const copySessionIdBtn = document.getElementById('copySessionIdBtn');
     const generateQrCodeBtn = document.getElementById('generateQrCodeBtn');
     const qrCodeImage = document.getElementById('qrCodeImage');
     const finishSessionBtn = document.getElementById('finishSessionBtn');
+
+    // 进度条元素
+    const progressBarContainer = document.getElementById('progressBarContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
 
     let currentSessionId = '';
     let uploadedPhotoList = [];
@@ -27,11 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasPhotos = uploadedPhotoList.length > 0;
         finishSessionBtn.disabled = !hasPhotos;
         generateQrCodeBtn.disabled = !hasPhotos;
-    }
-
-    function updateSessionIdDisplay() {
-        sessionIdDisplay.textContent = currentSessionId || '无';
-        updateButtonStates();
     }
 
     function truncateId(id, length = 8) {
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateButtonStates();
     }
 
-    // --- 新增：客户端生成 UUID 的辅助函数 ---
+    // --- 客户端生成 UUID 的辅助函数 ---
     function generateUuidClientSide() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -74,37 +75,81 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadBtn.disabled = true;
         showStatus('上传中...');
 
+        // 显示并重置进度条
+        progressBarContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+        progressText.textContent = '0%';
+
         let newSessionId = currentSessionId || generateUuidClientSide();
         const customerName = customerNameInput.value.trim();
 
-        const uploadPromises = Array.from(files).map(file => {
-            return new Promise(async (resolve, reject) => {
+        // 计算所有文件的总大小，用于总体进度
+        let totalFilesSize = 0;
+        Array.from(files).forEach(file => totalFilesSize += file.size);
+
+        // 使用 Map 存储每个文件已上传的字节数，键为文件在 files 数组中的索引
+        const uploadedBytesMap = new Map();
+        Array.from(files).forEach((_, index) => uploadedBytesMap.set(index, 0));
+
+        const uploadPromises = Array.from(files).map((file, index) => {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('sessionId', newSessionId);
                 formData.append('customerName', customerName);
 
-                try {
-                    const response = await fetch(`${BACKEND_URL}/upload`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await response.json();
-                    if (data.code === 0) {
-                        resolve(data);
-                    } else {
-                        reject(data.message || '上传失败');
+                xhr.open('POST', `${BACKEND_URL}/upload`);
+
+                // 监听上传进度事件
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        uploadedBytesMap.set(index, e.loaded); // 更新当前文件的已上传字节数
+
+                        let currentTotalLoaded = 0;
+                        uploadedBytesMap.forEach(loaded => currentTotalLoaded += loaded); // 累加所有文件的已上传字节数
+
+                        const percentComplete = (currentTotalLoaded / totalFilesSize) * 100;
+                        progressBar.style.width = `${percentComplete.toFixed(2)}%`;
+                        progressText.textContent = `${percentComplete.toFixed(0)}%`;
                     }
-                } catch (error) {
+                });
+
+                // 监听加载完成事件
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            if (data.code === 0) {
+                                resolve(data);
+                            } else {
+                                reject(data.message || '上传失败');
+                            }
+                        } catch (e) {
+                            reject('服务器响应解析失败');
+                        }
+                    } else {
+                        reject(`HTTP错误: ${xhr.status} ${xhr.statusText}`);
+                    }
+                };
+
+                // 监听错误事件
+                xhr.onerror = () => {
                     reject('网络错误或服务器无响应');
-                }
+                };
+
+                // 监听取消事件 (可选)
+                xhr.onabort = () => {
+                    reject('上传已取消');
+                };
+
+                xhr.send(formData);
             });
         });
 
         try {
             const results = await Promise.all(uploadPromises);
             currentSessionId = newSessionId;
-            updateSessionIdDisplay();
             showStatus('所有照片上传成功！');
             uploadedPhotoList = results.map(r => ({ id: r.photoId, url: r.photoUrl }));
             renderUploadedPhotos();
@@ -113,6 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus(`部分或全部上传失败: ${error}`, true);
         } finally {
             uploadBtn.disabled = false;
+            // 隐藏并重置进度条
+            progressBarContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
         }
     });
 
@@ -145,20 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 showStatus('网络错误或服务器无响应', true);
             }
-        }
-    });
-
-    // --- 复制会话ID ---
-    copySessionIdBtn.addEventListener('click', () => {
-        if (currentSessionId) {
-            navigator.clipboard.writeText(currentSessionId).then(() => {
-                alert('会话ID已复制到剪贴板！');
-            }).catch(err => {
-                console.error('复制失败:', err);
-                alert('复制失败，请手动复制。');
-            });
-        } else {
-            alert('没有可复制的会话ID。');
         }
     });
 
@@ -220,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSessionId = '';
                 uploadedPhotoList = [];
                 renderUploadedPhotos();
-                updateSessionIdDisplay();
                 customerNameInput.value = '';
                 qrCodeImage.style.display = 'none';
             } else {
@@ -232,5 +266,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 初始状态更新
-    updateSessionIdDisplay();
+    updateButtonStates();
 });

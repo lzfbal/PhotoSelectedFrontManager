@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>摄影师选片管理后台</title>
+    <title>Photographer Selection Admin</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>摄影师选片管理后台</h1>
+        <h1>Photographer Selection Admin</h1> <!-- 标题已修改 -->
 
         <div class="section">
             <h2>1. 上传照片</h2>
@@ -16,6 +16,11 @@
             <input type="file" id="photoUpload" multiple accept="image/*">
             <button id="uploadBtn">上传照片</button>
             <p id="uploadStatus"></p>
+            <div id="progressBarContainer" class="progress-bar-container" style="display: none;">
+                <div id="progressBar" class="progress-bar">
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
         </div>
 
         <div class="section">
@@ -27,10 +32,6 @@
 
         <div class="section">
             <h2>3. 选片会话管理</h2>
-            <div class="session-info">
-                <p>当前选片码: <strong id="sessionIdDisplay">无</strong></p>
-                <button id="copySessionIdBtn">复制选片码</button>
-            </div>
             <button id="generateQrCodeBtn" disabled>生成选片二维码</button>
             <div id="qrCodeContainer" class="qr-code-container">
                 <img id="qrCodeImage" src="" alt="选片二维码" style="display: none;">
