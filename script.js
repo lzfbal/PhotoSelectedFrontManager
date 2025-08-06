@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
 
-    // 新增：复制选片链接按钮
+    // 复制选片链接按钮
     const copyClientLinkBtn = document.getElementById('copyClientLinkBtn');
 
 
@@ -80,6 +80,40 @@ document.addEventListener('DOMContentLoaded', () => {
             return v.toString(16);
         });
     }
+
+    // --- 通用的复制文本到剪贴板函数 ---
+    async function copyTextToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('链接已复制到剪贴板！');
+        } catch (err) {
+            console.error('使用 navigator.clipboard.writeText 复制失败:', err);
+            // Fallback: document.execCommand('copy')
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            // 使其不可见并移出屏幕
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('链接已复制到剪贴板！');
+                } else {
+                    alert('复制失败，请手动复制：\n' + text);
+                }
+            } catch (err2) {
+                console.error('使用 document.execCommand 复制失败:', err2);
+                alert('复制失败，请手动复制：\n' + text);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    }
+
 
     // --- 上传照片逻辑 ---
     uploadBtn.addEventListener('click', async () => {
@@ -285,12 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     copyClientLinkBtn.addEventListener('click', () => {
         const linkToCopy = copyClientLinkBtn.dataset.link;
         if (linkToCopy) {
-            navigator.clipboard.writeText(linkToCopy).then(() => {
-                alert('客户选片链接已复制到剪贴板！');
-            }).catch(err => {
-                console.error('复制失败:', err);
-                alert('复制失败，请手动复制。');
-            });
+            copyTextToClipboard(linkToCopy); // 使用新的复制函数
         } else {
             alert('没有可复制的选片链接。');
         }

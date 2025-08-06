@@ -104,6 +104,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- 通用的复制文本到剪贴板函数 ---
+    async function copyTextToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('链接已复制到剪贴板！');
+        } catch (err) {
+            console.error('使用 navigator.clipboard.writeText 复制失败:', err);
+            // Fallback: document.execCommand('copy')
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            // 使其不可见并移出屏幕
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('链接已复制到剪贴板！');
+                } else {
+                    alert('复制失败，请手动复制：\n' + text);
+                }
+            } catch (err2) {
+                console.error('使用 document.execCommand 复制失败:', err2);
+                alert('复制失败，请手动复制：\n' + text);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    }
+
     // --- 加载会话列表 ---
     async function loadSessionList() {
         sessionListStatus.textContent = '加载中...';
@@ -141,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="card-actions">
                             <button class="view-detail-btn" data-session-id="${session.id}">查看详情</button>
                             <button class="delete-session-btn" data-session-id="${session.id}">删除</button>
-                            <!-- 新增：复制选片链接按钮 -->
+                            <!-- 复制选片链接按钮 -->
                             <button class="copy-client-link-btn" data-session-id="${session.id}" data-session-status="${session.status}">复制选片链接</button>
                         </div>
                     `;
@@ -372,12 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 复制客户选片链接函数 ---
     function copyClientLink(sessionIdToCopy) {
         const clientLink = `${CLIENT_SELECTION_PAGE_BASE_URL}?sessionId=${sessionIdToCopy}`;
-        navigator.clipboard.writeText(clientLink).then(() => {
-            alert('客户选片链接已复制到剪贴板！');
-        }).catch(err => {
-            console.error('复制失败:', err);
-            alert('复制失败，请手动复制。');
-        });
+        copyTextToClipboard(clientLink); // 使用新的复制函数
     }
 
     // --- 事件监听器 ---
