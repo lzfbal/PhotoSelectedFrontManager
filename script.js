@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const BACKEND_URL = 'http://localhost:3000'; // 替换为您的后端服务器地址
+    // const BACKEND_URL = 'http://localhost:3000'; // 替换为您的后端服务器地址
+    const BACKEND_URL = 'http://47.107.129.145:3000'; // 替换为您的后端服务器地址
 
     const customerNameInput = document.getElementById('customerNameInput'); // 新增
     const photoUpload = document.getElementById('photoUpload');

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const BACKEND_URL = 'http://localhost:3000';
+    // const BACKEND_URL = 'http://localhost:3000';
+    const BACKEND_URL = 'http://47.107.129.145:3000'; // 替换为您的后端服务器地址
 
     const sessionListSection = document.getElementById('sessionListSection');
     const sessionTableBody = document.getElementById('sessionTable').getElementsByTagName('tbody')[0];
