@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // const BACKEND_URL = 'http://localhost:3000';
-    const BACKEND_URL = 'http://47.107.129.145:3000'; // 替换为您的后端服务器地址
+    // 将 BACKEND_URL 修改为您的服务器公网 IP 地址和 Nginx 代理的 API 路径
+    // const BACKEND_URL = 'http://localhost:3000';  // 保留在本地测试用
+    const BACKEND_URL = 'http://47.107.129.145/api'; // <--- 修改这里
 
     const sessionListSection = document.getElementById('sessionListSection');
     const sessionTableBody = document.getElementById('sessionTable').getElementsByTagName('tbody')[0];
@@ -22,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailCreatedAt = document.getElementById('detailCreatedAt');
     const detailPhotosContainer = document.getElementById('detailPhotos');
     const backToListBtn = document.getElementById('backToListBtn');
-    // const deleteSessionBtn = document.getElementById('deleteSessionBtn'); // 移除此行，按钮已移走
 
     // 追加上传相关的元素
     const appendPhotoUpload = document.getElementById('appendPhotoUpload');
