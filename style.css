@@ -224,10 +224,13 @@ button:disabled {
     background-color: #0056b3;
 }
 
+/* --- 优化历史链接/返回链接样式 --- */
 .history-link, .back-link {
-    display: block;
-    text-align: center;
-    margin-top: 30px;
+    display: block; /* 保持块级元素 */
+    width: fit-content; /* 宽度自适应内容 */
+    min-width: 180px; /* 最小宽度 */
+    max-width: 300px; /* 最大宽度 */
+    margin: 30px auto; /* 自动居中并设置顶部间距 */
     padding: 12px 20px;
     background-color: #007bff;
     color: white;
@@ -245,7 +248,8 @@ button:disabled {
 }
 
 
-/* --- 移除旧的表格样式 --- */
+/* --- 优化历史会话表格样式 --- */
+/* 注意：表格样式已被卡片样式取代，但为防止意外，保留注释 */
 /*
 #sessionTable {
     width: 100%;
@@ -725,211 +729,327 @@ button:disabled {
 }
 
 
-/* --- 响应式调整 (Mobile-First Overrides) --- */
-
-/* 适用于屏幕宽度小于或等于 768px 的设备 (平板和更小尺寸) */
-@media (max-width: 768px) {
-    body {
-        padding: 15px;
-    }
-
-    .container {
-        margin: 20px auto;
-        padding: 20px;
-        border-radius: 8px;
-    }
-
-    h1 {
-        font-size: 2em;
-        margin-bottom: 30px;
-    }
-
-    h2 {
-        font-size: 1.4em;
-        margin-bottom: 15px;
-    }
-
-    .section {
-        padding: 15px;
-        margin-bottom: 20px;
-    }
-
-    /* 客户姓名输入框在小屏幕上恢复全宽 */
-    #customerNameInput {
-        max-width: 100%;
-    }
-
-    /* 按钮在小屏幕上堆叠，并取消右侧间距 */
-    button {
-        width: auto; /* 恢复默认宽度 */
-        margin-right: 5px;
-        margin-bottom: 10px; /* 增加垂直间距 */
-        display: inline-block; /* 允许它们并排显示，如果空间允许 */
-        padding: 10px 15px; /* 调整按钮大小 */
-        font-size: 0.9em;
-    }
-
-    /* 特定按钮强制全宽 */
-    .finish-btn,
-    .history-link,
-    .back-link,
-    .append-photos-section button { /* 追加上传按钮也全宽 */
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 15px;
-    }
-
-    .photo-grid {
-        gap: 10px;
-        justify-content: center;
-    }
-
-    .photo-item {
-        width: calc(50% - 10px); /* 两列布局，考虑间距 */
-        height: auto; /* 高度自适应 */
-        min-width: 120px; /* 防止图片过小 */
-    }
-
-    .photo-item img {
-        height: 120px; /* 图片部分固定高度 */
-    }
-
-    .session-info {
-        flex-direction: column; /* 垂直堆叠 */
-        align-items: flex-start;
-    }
-
-    .session-info p {
-        margin-right: 0;
-        margin-bottom: 5px;
-    }
-
-    .filter-controls {
-        flex-direction: column; /* 垂直堆叠 */
-        gap: 10px;
-        padding: 10px; /* 调整内边距 */
-    }
-
-    .filter-controls input[type="text"],
-    .filter-controls select,
-    .filter-controls button {
-        width: 100%;
-        margin-right: 0;
-        padding: 8px 12px; /* 调整大小 */
-        font-size: 0.9em;
-    }
-
-    /* 卡片网格在平板上变为单列 */
-    .session-cards-grid {
-        grid-template-columns: 1fr; /* 单列布局 */
-    }
-
-
-    .pagination-controls {
-        flex-direction: column; /* 垂直堆叠 */
-        gap: 10px;
-    }
-
-    .pagination-controls button {
-        width: 100%;
-        margin-right: 0;
-        padding: 8px 15px; /* 调整大小 */
-        font-size: 0.85em;
-    }
-
-    /* #sessionTable th, #sessionTable td { /* 移除表格相关样式 */
-        font-size: 0.9em;
-        padding: 8px;
-    } */
-
-    .modal-content {
-        width: 95%;
-        max-width: 95%;
-    }
-
-    .close-button {
-        top: 10px;
-        right: 15px;
-        font-size: 30px;
-    }
-
-    .photo-display-filter {
-        flex-direction: column; /* 垂直堆叠 */
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .photo-display-filter h3,
-    .photo-display-filter select {
-        width: 100%;
-        margin-right: 0;
-    }
-
-    .progress-bar {
-        height: 20px;
-        line-height: 20px;
-        font-size: 0.8em;
-    }
+/* --- 客户选片页面样式 (Client Selection Page Styles) --- */
+.client-container {
+    max-width: 1200px; /* 客户页面可以更宽一些 */
+    margin: 30px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* 适用于屏幕宽度小于或等于 480px 的设备 (智能手机) */
-@media (max-width: 480px) {
-    body {
-        padding: 10px;
-    }
+.client-container h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+}
 
-    .container {
+.client-message {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1.2em;
+    color: #555;
+    background-color: #f0f8ff;
+    border: 1px solid #cceeff;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.client-message .error-text {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.client-message .client-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.client-message .client-btn:hover {
+    background-color: #0056b3;
+}
+
+/* 新增：客户照片筛选器样式 */
+.client-filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.client-filter-controls h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: #34495e;
+}
+
+.client-filter-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1em;
+    flex-grow: 1; /* 允许选择框占据更多空间 */
+    min-width: 150px;
+}
+
+
+.client-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 桌面端多列 */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.client-photo-item {
+    display: flex; /* 使用 flex 布局 */
+    flex-direction: column; /* 垂直排列 */
+    border: 3px solid #ddd; /* 默认边框 */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; /* 添加背景色过渡 */
+    background-color: #f8f8f8; /* 确保有背景色 */
+}
+
+.client-photo-item.selected {
+    border-color: #007bff; /* 选中照片的蓝色边框 */
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3); /* 蓝色阴影 */
+    background-color: rgba(0, 123, 255, 0.05); /* 整个卡片浅蓝色背景 */
+}
+
+.client-photo-wrapper {
+    width: 100%;
+    padding-top: 100%; /* 保持正方形比例 */
+    position: relative;
+    flex-shrink: 0; /* 不压缩 */
+}
+
+.client-photo-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    cursor: zoom-in; /* 鼠标悬停时显示放大镜 */
+}
+
+/* 选中时的半透明覆盖层 */
+.client-selected-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 123, 255, 0.3); /* 改为半透明蓝色 */
+    display: none; /* 默认隐藏 */
+    z-index: 4; /* 在图片上方，在勾选标记下方 */
+}
+
+.client-photo-item.selected .client-selected-overlay {
+    display: block; /* 选中时显示 */
+}
+
+
+.client-selected-indicator {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #07c160;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    display: none; /* 默认隐藏 */
+    z-index: 5;
+}
+
+.client-photo-item.selected .client-selected-indicator {
+    display: block; /* 选中时显示 */
+}
+
+/* 新增：选择按钮样式 */
+.client-select-btn {
+    width: 100%;
+    padding: 10px 0;
+    background-color: #4CAF50; /* 绿色 */
+    color: white;
+    border: none;
+    border-radius: 0 0 8px 8px; /* 底部圆角 */
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0; /* 不压缩 */
+}
+
+.client-select-btn:hover {
+    background-color: #45a049;
+}
+
+.client-select-btn[disabled] {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.client-photo-item.selected .client-select-btn {
+    background-color: #dc3545; /* 选中后变为红色取消选择 */
+}
+
+.client-photo-item.selected .client-select-btn:hover {
+    background-color: #c82333;
+}
+
+
+/* 底部操作栏 */
+.client-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border-top: 1px solid #eee;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    box-sizing: border-box;
+    z-index: 100;
+}
+
+.client-selected-count {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.client-submit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.client-submit-btn:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.client-submit-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* --- 响应式调整 for Client Page --- */
+@media (max-width: 768px) {
+    .client-container {
+        padding: 20px;
         margin: 15px auto;
-        padding: 15px;
     }
-
-    h1 {
+    .client-container h1 {
         font-size: 1.8em;
         margin-bottom: 20px;
     }
-
-    h2 {
-        font-size: 1.2em;
-        margin-bottom: 10px;
-    }
-
-    .section {
+    .client-filter-controls {
+        flex-direction: column; /* 垂直堆叠 */
+        align-items: flex-start;
+        gap: 10px;
         padding: 10px;
-        margin-bottom: 15px;
     }
-
-    /* 确保所有按钮在超小屏幕上都全宽 */
-    button {
+    .client-filter-controls h3 {
         width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
+        text-align: left;
     }
-
-    .photo-item {
-        width: 100%; /* 单列布局 */
-        max-width: 300px; /* 限制单列图片的宽度，避免过宽 */
-        height: auto;
+    .client-filter-controls select {
+        width: 100%;
+        min-width: unset; /* 移除最小宽度限制 */
     }
-
-    .photo-item img {
-        height: 200px; /* 单列时图片高度稍大 */
+    .client-photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* 平板两列 */
+        gap: 10px;
     }
-
-    .delete-photo-btn {
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
+    .client-photo-item {
+        border-width: 2px;
+    }
+    .client-selected-indicator {
+        width: 25px;
+        height: 25px;
+        line-height: 25px;
         font-size: 1em;
     }
+    .client-bottom-bar {
+        padding: 10px 20px;
+    }
+    .client-selected-count {
+        font-size: 1em;
+    }
+    .client-submit-btn {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+    .client-select-btn {
+        padding: 8px 0;
+        font-size: 0.85em;
+    }
+}
 
-    /* #sessionTable th, #sessionTable td { /* 移除表格相关样式 */
+@media (max-width: 480px) {
+    .client-container {
+        padding: 15px;
+        margin: 10px auto;
+    }
+    .client-container h1 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+    }
+    .client-photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* 手机两列 */
+        gap: 8px;
+    }
+    .client-photo-item {
+        border-width: 2px;
+    }
+    .client-selected-indicator {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 0.9em;
+    }
+    .client-bottom-bar {
+        flex-direction: column; /* 手机上堆叠 */
+        padding: 10px 15px;
+        gap: 10px;
+    }
+    .client-submit-btn {
+        width: 100%; /* 手机上提交按钮全宽 */
+        margin-top: 5px;
+    }
+    .client-select-btn {
+        padding: 6px 0;
         font-size: 0.8em;
-        padding: 6px;
-    } */
-
-    .progress-bar {
-        height: 18px;
-        line-height: 18px;
-        font-size: 0.75em;
     }
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户选片</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="client-container">
+        <h1>请选择您的照片</h1>
+
+        <!-- 新增：照片筛选器 -->
+        <div class="client-filter-controls">
+            <h3>显示照片:</h3>
+            <select id="clientPhotoFilter">
+                <option value="all">所有照片</option>
+                <option value="selected">只显示已选</option>
+                <option value="unselected">只显示未选</option>
+            </select>
+        </div>
+
+        <div id="loadingMessage" class="client-message" style="display: none;">
+            <p>加载中...</p>
+        </div>
+        <div id="errorMessage" class="client-message" style="display: none;">
+            <p class="error-text"></p>
+            <button id="retryButton" class="client-btn">重试</button>
+        </div>
+        <div id="noPhotosMessage" class="client-message" style="display: none;">
+            <p>该会话没有照片或尚未准备好，请联系摄影师。</p>
+        </div>
+        <div id="submittedMessage" class="client-message" style="display: none;">
+            <p>您的选片结果已成功提交！感谢您的选择。</p>
+        </div>
+
+        <div id="clientPhotoGrid" class="client-photo-grid">
+            <!-- 照片将在这里动态加载 -->
+        </div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div id="clientBottomBar" class="client-bottom-bar" style="display: none;">
+        <span id="selectedCount" class="client-selected-count">已选: 0 张</span>
+        <button id="submitSelectionBtn" class="client-submit-btn" disabled>提交选片</button>
+    </div>
+
+    <!-- 大图预览模态框 (复用 style.css 中的 modal 样式) -->
+    <div id="imageModal" class="modal">
+        <span class="close-button">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script src="client-selection.js"></script>
+</body>
+</html>

@@ -6,9 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.107.129.145/api';
 
+    // 新增：客户选片页面的基础 URL
+    // 请根据您的前端部署位置进行调整：
+    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.107.129.145/client-selection.html';
+
     const sessionListSection = document.getElementById('sessionListSection');
-    // const sessionTableBody = document.getElementById('sessionTable').getElementsByTagName('tbody')[0]; // 移除此行
-    const sessionCardsGrid = document.getElementById('sessionCardsGrid'); // 新增：卡片网格容器
+    const sessionCardsGrid = document.getElementById('sessionCardsGrid');
     const sessionListStatus = document.getElementById('sessionListStatus');
 
     const searchInput = document.getElementById('searchInput');
@@ -27,20 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailPhotosContainer = document.getElementById('detailPhotos');
     const backToListBtn = document.getElementById('backToListBtn');
 
-    // 追加上传相关的元素
     const appendPhotoUpload = document.getElementById('appendPhotoUpload');
     const appendUploadBtn = document.getElementById('appendUploadBtn');
     const appendUploadStatus = document.getElementById('appendUploadStatus');
 
-    // 追加上传进度条元素
     const appendProgressBarContainer = document.getElementById('appendProgressBarContainer');
     const appendProgressBar = document.getElementById('appendProgressBar');
     const appendProgressText = document.getElementById('appendProgressText');
 
-    // 照片筛选器元素
     const photoFilter = document.getElementById('photoFilter');
 
-    // 大图预览模态框元素
     const imageModal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
     const closeButton = document.querySelector('.close-button');
@@ -48,21 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentPage = 1;
     const itemsPerPage = 10;
-    let currentDetailSessionId = ''; // 存储当前详情页面的会话ID
-    let currentPhotosData = []; // 存储当前会话的所有照片数据，用于筛选
+    let currentDetailSessionId = '';
+    let currentPhotosData = [];
 
 
     // --- 辅助函数 ---
     function showSection(sectionId) {
-        console.log(`尝试显示区域: ${sectionId}`); // Debug: 确认函数被调用
+        console.log(`尝试显示区域: ${sectionId}`);
         sessionListSection.style.display = 'none';
         sessionDetailSection.style.display = 'none';
         const targetSection = document.getElementById(sectionId);
         if (targetSection) {
             targetSection.style.display = 'block';
-            console.log(`区域 ${sectionId} 已显示。`); // Debug: 确认区域成功显示
+            console.log(`区域 ${sectionId} 已显示。`);
         } else {
-            console.error(`错误：未找到ID为 ${sectionId} 的区域！`); // Debug: 区域未找到
+            console.error(`错误：未找到ID为 ${sectionId} 的区域！`);
         }
     }
 
@@ -83,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return id.substring(0, length) + '...';
     }
 
-    // --- 渲染照片列表 (根据筛选条件) ---
     function renderPhotos(photosToRender) {
         detailPhotosContainer.innerHTML = '';
         if (photosToRender.length > 0) {
@@ -95,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="photo-id-display" title="${photo.id}">ID: ${truncateId(photo.id)}</div>
                     <span class="selected-indicator">✔</span>
                 `;
-                // 为图片添加点击事件监听器
                 photoItem.querySelector('img').addEventListener('click', (e) => {
                     modalImage.src = e.target.dataset.fullSrc;
                     imageModal.style.display = 'block';
@@ -110,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 加载会话列表 ---
     async function loadSessionList() {
         sessionListStatus.textContent = '加载中...';
-        sessionCardsGrid.innerHTML = ''; // 清空卡片容器
+        sessionCardsGrid.innerHTML = '';
 
         const status = statusFilter.value;
         const search = searchInput.value.trim();
@@ -129,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.code === 0 && data.sessions.length > 0) {
                 data.sessions.forEach(session => {
                     const sessionCard = document.createElement('div');
-                    sessionCard.className = 'session-card'; // 添加卡片样式类
+                    sessionCard.className = 'session-card';
 
                     sessionCard.innerHTML = `
                         <div class="card-header">
@@ -144,12 +141,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="card-actions">
                             <button class="view-detail-btn" data-session-id="${session.id}">查看详情</button>
                             <button class="delete-session-btn" data-session-id="${session.id}">删除</button>
+                            <!-- 新增：复制选片链接按钮 -->
+                            <button class="copy-client-link-btn" data-session-id="${session.id}" data-session-status="${session.status}">复制选片链接</button>
                         </div>
                     `;
 
                     // 为按钮添加事件监听器
                     sessionCard.querySelector('.view-detail-btn').addEventListener('click', () => viewSessionDetail(session.id));
                     sessionCard.querySelector('.delete-session-btn').addEventListener('click', () => deleteSession(session.id));
+
+                    const copyLinkBtn = sessionCard.querySelector('.copy-client-link-btn');
+                    // 仅当会话状态为 'ready' 或 'submitted' 时才启用复制链接按钮
+                    if (session.status === 'ready' || session.status === 'submitted') {
+                         copyLinkBtn.addEventListener('click', () => copyClientLink(session.id));
+                    } else {
+                         copyLinkBtn.disabled = true;
+                         copyLinkBtn.textContent = '链接未就绪';
+                         copyLinkBtn.style.backgroundColor = '#ccc'; // 可选：置灰
+                    }
+
 
                     sessionCardsGrid.appendChild(sessionCard);
                 });
@@ -184,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         detailPhotosContainer.textContent = '加载照片中...';
         appendPhotoUpload.value = '';
         showAppendStatus('');
-        photoFilter.value = 'all'; // 重置照片筛选器
+        photoFilter.value = 'all';
 
         try {
             console.log(`开始请求会话详情和照片数据 for sessionId: ${sessionId}`);
@@ -255,16 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
         appendUploadBtn.disabled = true;
         showAppendStatus('追加上传中...');
 
-        // 显示并重置进度条
         appendProgressBarContainer.style.display = 'block';
         appendProgressBar.style.width = '0%';
         appendProgressText.textContent = '0%';
 
-        // 计算所有文件的总大小，用于总体进度
         let totalAppendFilesSize = 0;
         Array.from(files).forEach(file => totalAppendFilesSize += file.size);
 
-        // 使用 Map 存储每个文件已上传的字节数
         const appendUploadedBytesMap = new Map();
         Array.from(files).forEach((_, index) => appendUploadedBytesMap.set(index, 0));
 
@@ -277,13 +284,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 xhr.open('POST', `${BACKEND_URL}/upload`);
 
-                // 监听上传进度事件
                 xhr.upload.addEventListener('progress', (e) => {
                     if (e.lengthComputable) {
-                        appendUploadedBytesMap.set(index, e.loaded); // 更新当前文件的已上传字节数
+                        appendUploadedBytesMap.set(index, e.loaded);
 
                         let currentTotalLoaded = 0;
-                        appendUploadedBytesMap.forEach(loaded => currentTotalLoaded += loaded); // 累加所有文件的已上传字节数
+                        appendUploadedBytesMap.forEach(loaded => currentTotalLoaded += loaded);
 
                         const percentComplete = (currentTotalLoaded / totalAppendFilesSize) * 100;
                         appendProgressBar.style.width = `${percentComplete.toFixed(2)}%`;
@@ -291,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // 监听加载完成事件
                 xhr.onload = () => {
                     if (xhr.status >= 200 && xhr.status < 300) {
                         try {
@@ -309,12 +314,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
 
-                // 监听错误事件
                 xhr.onerror = () => {
                     reject('网络错误或服务器无响应');
                 };
 
-                // 监听取消事件 (可选)
                 xhr.onabort = () => {
                     reject('上传已取消');
                 };
@@ -326,31 +329,25 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const results = await Promise.all(uploadPromises);
             showAppendStatus('所有照片追加上传成功！');
-            // 重新加载详情页以更新照片列表和数量
             await viewSessionDetail(currentDetailSessionId);
-            appendPhotoUpload.value = ''; // 清空文件选择
+            appendPhotoUpload.value = '';
         } catch (error) {
             showAppendStatus(`部分或全部追加上传失败: ${error}`, true);
         } finally {
             appendUploadBtn.disabled = false;
-            // 隐藏并重置进度条
             appendProgressBarContainer.style.display = 'none';
             appendProgressBar.style.width = '0%';
             appendProgressText.textContent = '0%';
         }
     });
 
-    // --- 删除整个会话逻辑 (现在由表格中的按钮触发) ---
+    // --- 删除整个会话逻辑 ---
     async function deleteSession(sessionIdToDelete) {
         const confirmDelete = confirm(`您确定要删除会话 ${sessionIdToDelete} 及其所有照片吗？\n此操作不可逆！`);
         if (!confirmDelete) {
             return;
         }
 
-        // 禁用所有删除按钮，防止重复点击
-        // 由于现在是卡片，需要找到所有删除按钮，或者重新加载列表后自然恢复
-        // 这里暂时不禁用，因为删除后会立即刷新列表
-        // document.querySelectorAll('.delete-button-table').forEach(btn => btn.disabled = true);
         sessionListStatus.textContent = `删除会话 ${sessionIdToDelete} 中...`;
 
         try {
@@ -362,20 +359,26 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.code === 0) {
                 alert('会话及其所有照片已成功删除！');
                 sessionListStatus.textContent = '会话删除成功！';
-                // 删除成功后，重新加载会话列表
-                currentPage = 1; // 重置分页
+                currentPage = 1;
                 loadSessionList();
             } else {
                 sessionListStatus.textContent = `删除失败: ${data.message}`;
             }
         } catch (error) {
             sessionListStatus.textContent = '网络错误或服务器无响应';
-        } finally {
-            // 重新启用所有删除按钮（在 loadSessionList 重新渲染后也会自动启用）
-            // document.querySelectorAll('.delete-button-table').forEach(btn => btn.disabled = false);
         }
     }
 
+    // --- 复制客户选片链接函数 ---
+    function copyClientLink(sessionIdToCopy) {
+        const clientLink = `${CLIENT_SELECTION_PAGE_BASE_URL}?sessionId=${sessionIdToCopy}`;
+        navigator.clipboard.writeText(clientLink).then(() => {
+            alert('客户选片链接已复制到剪贴板！');
+        }).catch(err => {
+            console.error('复制失败:', err);
+            alert('复制失败，请手动复制。');
+        });
+    }
 
     // --- 事件监听器 ---
     applyFilterBtn.addEventListener('click', () => {
@@ -400,21 +403,17 @@ document.addEventListener('DOMContentLoaded', () => {
         loadSessionList();
     });
 
-    // 监听照片筛选器变化
     photoFilter.addEventListener('change', applyPhotoFilter);
 
-    // 监听模态框关闭按钮
     closeButton.addEventListener('click', () => {
         imageModal.style.display = 'none';
     });
 
-    // 点击模态框外部关闭
     imageModal.addEventListener('click', (e) => {
         if (e.target === imageModal) {
             imageModal.style.display = 'none';
         }
     });
-
 
     // 初始加载
     loadSessionList();

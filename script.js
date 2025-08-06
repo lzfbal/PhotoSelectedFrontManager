@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.107.129.145/api';
 
+    // 新增：客户选片页面的基础 URL
+    // 请根据您的前端部署位置进行调整：
+    // 如果您使用 live-server 或 http-server 在本地服务前端文件，并且 client-selection.html 在根目录：
+    // const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://your-frontend-domain.com/client-selection.html';
+    // 如果您直接通过文件路径打开 (不推荐，因为剪贴板API可能受限)：
+    // const CLIENT_SELECTION_PAGE_BASE_URL = './client-selection.html';
+    // 假设您的前端也部署在 47.107.129.145，且 client-selection.html 位于根目录
+    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.107.129.145/client-selection.html';
+
     const customerNameInput = document.getElementById('customerNameInput');
     const photoUpload = document.getElementById('photoUpload');
     const uploadBtn = document.getElementById('uploadBtn');
@@ -20,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
 
+    // 新增：复制选片链接按钮
+    const copyClientLinkBtn = document.getElementById('copyClientLinkBtn');
+
+
     let currentSessionId = '';
     let uploadedPhotoList = [];
 
@@ -33,6 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasPhotos = uploadedPhotoList.length > 0;
         finishSessionBtn.disabled = !hasPhotos;
         generateQrCodeBtn.disabled = !hasPhotos;
+        // 如果没有当前会话或照片，则隐藏复制链接按钮
+        if (!currentSessionId || !hasPhotos) {
+            copyClientLinkBtn.style.display = 'none';
+        }
     }
 
     function truncateId(id, length = 8) {
@@ -75,19 +92,17 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadBtn.disabled = true;
         showStatus('上传中...');
 
-        // 显示并重置进度条
         progressBarContainer.style.display = 'block';
         progressBar.style.width = '0%';
         progressText.textContent = '0%';
+        copyClientLinkBtn.style.display = 'none'; // 开始上传时隐藏复制链接按钮
 
         let newSessionId = currentSessionId || generateUuidClientSide();
         const customerName = customerNameInput.value.trim();
 
-        // 计算所有文件的总大小，用于总体进度
         let totalFilesSize = 0;
         Array.from(files).forEach(file => totalFilesSize += file.size);
 
-        // 使用 Map 存储每个文件已上传的字节数，键为文件在 files 数组中的索引
         const uploadedBytesMap = new Map();
         Array.from(files).forEach((_, index) => uploadedBytesMap.set(index, 0));
 
@@ -101,13 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 xhr.open('POST', `${BACKEND_URL}/upload`);
 
-                // 监听上传进度事件
                 xhr.upload.addEventListener('progress', (e) => {
                     if (e.lengthComputable) {
-                        uploadedBytesMap.set(index, e.loaded); // 更新当前文件的已上传字节数
+                        uploadedBytesMap.set(index, e.loaded);
 
                         let currentTotalLoaded = 0;
-                        uploadedBytesMap.forEach(loaded => currentTotalLoaded += loaded); // 累加所有文件的已上传字节数
+                        uploadedBytesMap.forEach(loaded => currentTotalLoaded += loaded);
 
                         const percentComplete = (currentTotalLoaded / totalFilesSize) * 100;
                         progressBar.style.width = `${percentComplete.toFixed(2)}%`;
@@ -115,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // 监听加载完成事件
                 xhr.onload = () => {
                     if (xhr.status >= 200 && xhr.status < 300) {
                         try {
@@ -133,12 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
 
-                // 监听错误事件
                 xhr.onerror = () => {
                     reject('网络错误或服务器无响应');
                 };
 
-                // 监听取消事件 (可选)
                 xhr.onabort = () => {
                     reject('上传已取消');
                 };
@@ -154,11 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadedPhotoList = results.map(r => ({ id: r.photoId, url: r.photoUrl }));
             renderUploadedPhotos();
             photoUpload.value = ''; // 清空文件选择
+            // 上传成功后，完成会话按钮将被启用，复制链接按钮将在完成会话后显示
         } catch (error) {
             showStatus(`部分或全部上传失败: ${error}`, true);
         } finally {
             uploadBtn.disabled = false;
-            // 隐藏并重置进度条
             progressBarContainer.style.display = 'none';
             progressBar.style.width = '0%';
             progressText.textContent = '0%';
@@ -251,7 +262,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (data.code === 0) {
                 showStatus('会话已完成！');
-                // 可以清空当前会话数据，准备开始新的会话
+                // 显示复制客户选片链接按钮
+                const clientLink = `${CLIENT_SELECTION_PAGE_BASE_URL}?sessionId=${currentSessionId}`;
+                copyClientLinkBtn.dataset.link = clientLink; // 将链接存储在data属性中
+                copyClientLinkBtn.style.display = 'block'; // 显示按钮
+
+                // 可选：清空当前会话数据以开始新会话
                 currentSessionId = '';
                 uploadedPhotoList = [];
                 renderUploadedPhotos();
@@ -262,6 +278,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             showStatus('网络错误或服务器无响应', true);
+        }
+    });
+
+    // --- 复制客户选片链接 ---
+    copyClientLinkBtn.addEventListener('click', () => {
+        const linkToCopy = copyClientLinkBtn.dataset.link;
+        if (linkToCopy) {
+            navigator.clipboard.writeText(linkToCopy).then(() => {
+                alert('客户选片链接已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制。');
+            });
+        } else {
+            alert('没有可复制的选片链接。');
         }
     });
 
