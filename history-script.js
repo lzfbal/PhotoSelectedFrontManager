@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ====================================================================
     // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
-    const DEBUG_MODE = true; // <--- 修改这里来切换调试模式
+    const DEBUG_MODE = false; // <--- 修改这里来切换调试模式
     // ====================================================================
 
     const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.107.129.145/api';
