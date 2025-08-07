@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEBUG_MODE = false; // <--- 修改这里来切换调试模式
     // ====================================================================
 
-    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://cutemonster.com.cn/api';
+    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.112.30.9/api';
 
     const portfolioGrid = document.getElementById('portfolioGrid');
     const portfolioLoadingMessage = document.getElementById('portfolioLoadingMessage');
