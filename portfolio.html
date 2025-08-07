@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摄影作品集</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="client-container">
+        <h1>摄影作品集</h1>
+
+        <!-- 作品分类筛选器 -->
+        <div class="portfolio-filter-controls">
+            <h3>作品分类:</h3>
+            <select id="portfolioCategoryFilter">
+                <option value="all">所有分类</option>
+                <!-- 分类选项将由JS动态加载 -->
+            </select>
+        </div>
+
+        <div id="portfolioLoadingMessage" class="client-message" style="display: none;">
+            <p>加载中...</p>
+        </div>
+        <div id="portfolioErrorMessage" class="client-message" style="display: none;">
+            <p class="error-text"></p>
+            <button id="portfolioRetryButton" class="client-btn">重试</button>
+        </div>
+        <div id="noPortfolioItemsMessage" class="client-message" style="display: none;">
+            <p>目前没有作品。</p>
+        </div>
+
+        <div id="portfolioGrid" class="portfolio-grid">
+            <!-- 作品将在这里动态加载 -->
+        </div>
+    </div>
+
+    <!-- 大图预览模态框 (复用 style.css 中的 modal 样式) -->
+    <div id="imageModal" class="modal">
+        <span class="close-button">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script src="portfolio.js"></script>
+</body>
+</html>
