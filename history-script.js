@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 新增：客户选片页面的基础 URL
     // 请根据您的前端部署位置进行调整：
-    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.107.129.145/client-selection.html';
+    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.107.129.145/photo-app/client-selection.html';
 
     const sessionListSection = document.getElementById('sessionListSection');
     const sessionCardsGrid = document.getElementById('sessionCardsGrid');

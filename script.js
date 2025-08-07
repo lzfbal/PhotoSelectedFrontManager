@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 如果您直接通过文件路径打开 (不推荐，因为剪贴板API可能受限)：
     // const CLIENT_SELECTION_PAGE_BASE_URL = './client-selection.html';
     // 假设您的前端也部署在 47.107.129.145，且 client-selection.html 位于根目录
-    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.107.129.145/client-selection.html';
+    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.107.129.145/photo-app/client-selection.html';
 
     const customerNameInput = document.getElementById('customerNameInput');
     const photoUpload = document.getElementById('photoUpload');
