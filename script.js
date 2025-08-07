@@ -26,21 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 复制选片链接按钮
     const copyClientLinkBtn = document.getElementById('copyClientLinkBtn');
 
-    // 作品集管理元素
-    // const portfolioTitleInput = document.getElementById('portfolioTitleInput'); // 移除此行
-    const portfolioCategoryInput = document.getElementById('portfolioCategoryInput');
-    const portfolioUpload = document.getElementById('portfolioUpload');
-    const uploadPortfolioBtn = document.getElementById('uploadPortfolioBtn');
-    const portfolioUploadStatus = document.getElementById('portfolioUploadStatus');
-    const portfolioProgressBarContainer = document.getElementById('portfolioProgressBarContainer');
-    const portfolioProgressBar = document.getElementById('portfolioProgressBar');
-    const portfolioProgressText = document.getElementById('portfolioProgressText');
-    const uploadedPortfolioItemsContainer = document.getElementById('uploadedPortfolioItems');
+    // 作品集管理元素 (已移除，故注释掉)
+    // const portfolioTitleInput = document.getElementById('portfolioTitleInput');
+    // const portfolioCategoryInput = document.getElementById('portfolioCategoryInput');
+    // const portfolioUpload = document.getElementById('portfolioUpload');
+    // const uploadPortfolioBtn = document.getElementById('uploadPortfolioBtn');
+    // const portfolioUploadStatus = document.getElementById('portfolioUploadStatus');
+    // const portfolioProgressBarContainer = document.getElementById('portfolioProgressBarContainer');
+    // const portfolioProgressBar = document.getElementById('portfolioProgressBar');
+    // const portfolioProgressText = document.getElementById('portfolioProgressText');
+    // const uploadedPortfolioItemsContainer = document.getElementById('uploadedPortfolioItems');
 
 
     let currentSessionId = '';
     let uploadedPhotoList = [];
-    let portfolioItems = []; // 存储作品集数据
+    // let portfolioItems = []; // 存储作品集数据 (已移除)
 
     // --- 辅助函数 ---
     function showStatus(message, isError = false) {
@@ -48,10 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadStatus.style.color = isError ? 'red' : 'green';
     }
 
-    function showPortfolioStatus(message, isError = false) {
-        portfolioUploadStatus.textContent = message;
-        portfolioUploadStatus.style.color = isError ? 'red' : 'green';
-    }
+    // function showPortfolioStatus(message, isError = false) { // 移除此函数
+    //     portfolioUploadStatus.textContent = message;
+    //     portfolioUploadStatus.style.color = isError ? 'red' : 'green';
+    // }
 
     function updateButtonStates() {
         const hasPhotos = uploadedPhotoList.length > 0;
@@ -83,23 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateButtonStates();
     }
 
-    // --- 渲染作品集项目 ---
-    function renderPortfolioItems() {
-        uploadedPortfolioItemsContainer.innerHTML = '';
-        portfolioItems.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'photo-item portfolio-item'; // 复用 photo-item 样式，并添加 portfolio-item
-            itemDiv.innerHTML = `
-                <img src="${item.url}" alt="${item.title || '作品'}">
-                <div class="portfolio-info">
-                    <p class="portfolio-title" title="${item.title || '作品'}">${item.title || '作品'}</p>
-                    <p class="portfolio-category">${item.category}</p>
-                </div>
-                <button class="delete-photo-btn delete-portfolio-btn" data-item-id="${item.id}">X</button>
-            `;
-            uploadedPortfolioItemsContainer.appendChild(itemDiv);
-        });
-    }
+    // --- 渲染作品集项目 (已移除，故注释掉) ---
+    // function renderPortfolioItems() { ... }
 
     // --- 客户端生成 UUID 的辅助函数 ---
     function generateUuidClientSide() {
@@ -352,152 +337,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 作品集上传逻辑 ---
-    uploadPortfolioBtn.addEventListener('click', async () => {
-        const files = portfolioUpload.files; // 获取所有选中的文件
-        if (files.length === 0) {
-            showPortfolioStatus('请选择作品文件！', true);
-            return;
-        }
+    // --- 作品集上传逻辑 (已移除) ---
+    // uploadPortfolioBtn.addEventListener('click', async () => { ... });
 
-        uploadPortfolioBtn.disabled = true;
-        showPortfolioStatus('作品上传中...');
+    // --- 加载作品集列表 (已移除) ---
+    // async function loadPortfolioItems() { ... }
 
-        portfolioProgressBarContainer.style.display = 'block';
-        portfolioProgressBar.style.width = '0%';
-        portfolioProgressText.textContent = '0%';
-
-        // const title = portfolioTitleInput.value.trim(); // 移除 title
-        const category = portfolioCategoryInput.value.trim();
-
-        // 计算所有文件的总大小，用于总体进度
-        let totalFilesSize = 0;
-        Array.from(files).forEach(file => totalFilesSize += file.size);
-
-        // 使用 Map 存储每个文件已上传的字节数，键为文件在 files 数组中的索引
-        const uploadedBytesMap = new Map();
-        Array.from(files).forEach((_, index) => uploadedBytesMap.set(index, 0));
-
-        const uploadPromises = Array.from(files).map((file, index) => {
-            return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                const formData = new FormData();
-                formData.append('file', file); // 后端接收单个文件名为 'file'
-                // formData.append('title', title); // 移除 title
-                formData.append('category', category);
-
-                xhr.open('POST', `${BACKEND_URL}/portfolio/upload`);
-
-                xhr.upload.addEventListener('progress', (e) => {
-                    if (e.lengthComputable) {
-                        uploadedBytesMap.set(index, e.loaded); // 更新当前文件的已上传字节数
-
-                        let currentTotalLoaded = 0;
-                        uploadedBytesMap.forEach(loaded => currentTotalLoaded += loaded); // 累加所有文件的已上传字节数
-
-                        const percentComplete = (currentTotalLoaded / totalFilesSize) * 100;
-                        portfolioProgressBar.style.width = `${percentComplete.toFixed(2)}%`;
-                        portfolioProgressText.textContent = `${percentComplete.toFixed(0)}%`;
-                    }
-                });
-
-                xhr.onload = () => {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        try {
-                            const data = JSON.parse(xhr.responseText);
-                            if (data.code === 0) {
-                                resolve(data);
-                            } else {
-                                reject(data.message || '上传失败');
-                            }
-                        } catch (e) {
-                            reject('服务器响应解析失败');
-                        }
-                    } else {
-                        reject(`HTTP错误: ${xhr.status} ${xhr.statusText}`);
-                    }
-                };
-
-                xhr.onerror = () => {
-                    reject('网络错误或服务器无响应');
-                };
-
-                xhr.onabort = () => {
-                    reject('上传已取消');
-                };
-
-                xhr.send(formData);
-            });
-        });
-
-        try {
-            const results = await Promise.all(uploadPromises);
-            showPortfolioStatus('所有作品上传成功！');
-            // portfolioTitleInput.value = ''; // 移除 title
-            portfolioCategoryInput.value = '';
-            portfolioUpload.value = ''; // 清空文件选择
-            await loadPortfolioItems(); // 重新加载作品列表
-        } catch (error) {
-            showPortfolioStatus(`部分或全部作品上传失败: ${error}`, true);
-        } finally {
-            uploadPortfolioBtn.disabled = false;
-            portfolioProgressBarContainer.style.display = 'none';
-            portfolioProgressBar.style.width = '0%';
-            portfolioProgressText.textContent = '0%';
-        }
-    });
-
-    // --- 加载作品集列表 ---
-    async function loadPortfolioItems() {
-        try {
-            const response = await fetch(`${BACKEND_URL}/portfolio`);
-            const data = await response.json();
-            if (data.code === 0) {
-                portfolioItems = data.portfolioItems;
-                renderPortfolioItems();
-            } else {
-                console.error('加载作品集失败:', data.message);
-                showPortfolioStatus('加载作品集失败。', true);
-            }
-        } catch (error) {
-            console.error('加载作品集网络错误:', error);
-            showPortfolioStatus('加载作品集网络错误。', true);
-        }
-    }
-
-    // --- 删除作品集项目 ---
-    uploadedPortfolioItemsContainer.addEventListener('click', async (e) => {
-        if (e.target.classList.contains('delete-portfolio-btn')) {
-            const itemIdToDelete = e.target.dataset.itemId;
-            if (!itemIdToDelete) {
-                showPortfolioStatus('作品ID缺失，无法删除。', true);
-                return;
-            }
-
-            if (!confirm('确定要删除这个作品吗？此操作不可逆。')) {
-                return;
-            }
-
-            showPortfolioStatus('删除作品中...');
-            try {
-                const response = await fetch(`${BACKEND_URL}/portfolio/${itemIdToDelete}`, {
-                    method: 'DELETE'
-                });
-                const data = await response.json();
-                if (data.code === 0) {
-                    showPortfolioStatus('作品删除成功！');
-                    await loadPortfolioItems(); // 重新加载列表
-                } else {
-                    showPortfolioStatus(`删除失败: ${data.message}`, true);
-                }
-            } catch (error) {
-                showPortfolioStatus('网络错误或服务器无响应', true);
-            }
-        }
-    });
+    // --- 删除作品集项目 (已移除) ---
+    // uploadedPortfolioItemsContainer.addEventListener('click', async (e) => { ... });
 
 
     // 初始状态更新
     updateButtonStates();
-    loadPortfolioItems(); // 页面加载时加载作品集
+    // loadPortfolioItems(); // 页面加载时加载作品集 (已移除)
 });
