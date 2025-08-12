@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ====================================================================
     // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
-    const DEBUG_MODE = false; // <--- 修改这里来切换调试模式
+    const DEBUG_MODE = true; // <--- 修改这里来切换调试模式
     // ====================================================================
 
-    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://cutemonster.com.cn/api';
+    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.112.30.9/api';
 
     // 新增：客户选片页面的基础 URL
     // 请根据您的前端部署位置进行调整：
-    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://cutemonster.com.cn/client-selection.html';
+    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.112.30.9/client-selection.html';
 
 
     const clientPhotoGrid = document.getElementById('clientPhotoGrid');

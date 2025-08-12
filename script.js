@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ====================================================================
     // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
-    const DEBUG_MODE = false; // <--- 修改这里来切换调试模式
+    const DEBUG_MODE = true; // <--- 修改这里来切换调试模式
     // ====================================================================
 
-    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://cutemonster.com.cn/api';
+    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.112.30.9/api';
 
     // 客户选片页面的基础 URL
-    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://cutemonster.com.cn/photo-app/client-selection.html';
+    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.112.30.9/photo-app/client-selection.html';
 
     const customerNameInput = document.getElementById('customerNameInput');
     const photoUpload = document.getElementById('photoUpload');
