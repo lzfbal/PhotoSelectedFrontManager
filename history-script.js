@@ -1,14 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ====================================================================
-    // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
-    const DEBUG_MODE = true; // <--- 修改这里来切换调试模式
-    // ====================================================================
+    // 从全局配置对象中获取配置
+    const appConfig = window.appConfig;
 
-    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.112.30.9/api';
-
-    // 客户选片页面的基础 URL
-    // 生产环境地址已更新为包含 /photo-app/ 前缀
-    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.112.30.9/photo-app/client-selection.html';
+    const BACKEND_URL = appConfig.BACKEND_URL;
+    const CLIENT_FRONTEND_BASE_URL = appConfig.CLIENT_FRONTEND_BASE_URL; // 重命名变量
 
     const sessionListSection = document.getElementById('sessionListSection');
     const sessionCardsGrid = document.getElementById('sessionCardsGrid');
@@ -404,8 +399,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 复制客户选片链接函数 ---
     function copyClientLink(sessionIdToCopy) {
-        const clientLink = `${CLIENT_SELECTION_PAGE_BASE_URL}?sessionId=${sessionIdToCopy}`;
-        copyTextToClipboard(clientLink); // 使用新的复制函数
+        // 使用 CLIENT_FRONTEND_BASE_URL 构建链接
+        const clientLink = `${CLIENT_FRONTEND_BASE_URL}/client-selection.html?sessionId=${sessionIdToCopy}`;
+        copyTextToClipboard(clientLink);
     }
 
     // --- 事件监听器 ---

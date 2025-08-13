@@ -1,14 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ====================================================================
-    // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
-    const DEBUG_MODE = true; // <--- 修改这里来切换调试模式
-    // ====================================================================
+    // 从全局配置对象中获取配置
+    const appConfig = window.appConfig;
 
-    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.112.30.9/api';
-
-    // 新增：客户选片页面的基础 URL
-    // 请根据您的前端部署位置进行调整：
-    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.112.30.9/client-selection.html';
+    const BACKEND_URL = appConfig.BACKEND_URL;
+    // CLIENT_FRONTEND_BASE_URL 在 client-selection.js 中不直接用于构建自身 URL，
+    // 但如果未来有其他前端页面的跳转需求，可以这样使用：
+    // const CLIENT_FRONTEND_BASE_URL = appConfig.CLIENT_FRONTEND_BASE_URL;
 
 
     const clientPhotoGrid = document.getElementById('clientPhotoGrid');

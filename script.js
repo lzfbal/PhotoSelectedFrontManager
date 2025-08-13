@@ -1,13 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ====================================================================
-    // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
-    const DEBUG_MODE = true; // <--- 修改这里来切换调试模式
-    // ====================================================================
+    // 从全局配置对象中获取配置
+    const appConfig = window.appConfig; // 直接获取 appConfig 即可
 
-    const BACKEND_URL = DEBUG_MODE ? 'http://localhost:3000' : 'http://47.112.30.9/api';
-
-    // 客户选片页面的基础 URL
-    const CLIENT_SELECTION_PAGE_BASE_URL = DEBUG_MODE ? 'http://localhost:8080/client-selection.html' : 'http://47.112.30.9/photo-app/client-selection.html';
+    const BACKEND_URL = appConfig.BACKEND_URL;
+    const CLIENT_FRONTEND_BASE_URL = appConfig.CLIENT_FRONTEND_BASE_URL; // 重命名变量
 
     const customerNameInput = document.getElementById('customerNameInput');
     const photoUpload = document.getElementById('photoUpload');
@@ -18,12 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrCodeImage = document.getElementById('qrCodeImage');
     const finishSessionBtn = document.getElementById('finishSessionBtn');
 
-    // 进度条元素
     const progressBarContainer = document.getElementById('progressBarContainer');
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
 
-    // 复制选片链接按钮
     const copyClientLinkBtn = document.getElementById('copyClientLinkBtn');
 
     // 作品集管理元素 (已移除，故注释掉)
@@ -289,31 +283,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 完成会话 ---
     finishSessionBtn.addEventListener('click', async () => {
-        if (!currentSessionId || uploadedPhotoList.length === 0) {
-            showStatus('没有会话或照片，无法完成。', true);
-            return;
-        }
-        if (!confirm('确定要完成本次会话吗？完成意味着客户可以开始选片了。')) {
-            return;
-        }
-        showStatus('完成会话中...');
+        // ... (省略部分代码) ...
         try {
             const response = await fetch(`${BACKEND_URL}/finishSession`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ sessionId: currentSessionId })
             });
             const data = await response.json();
             if (data.code === 0) {
                 showStatus('会话已完成！');
                 // 显示复制客户选片链接按钮
-                const clientLink = `${CLIENT_SELECTION_PAGE_BASE_URL}?sessionId=${currentSessionId}`;
-                copyClientLinkBtn.dataset.link = clientLink; // 将链接存储在data属性中
-                copyClientLinkBtn.style.display = 'block'; // 显示按钮
+                // 使用 CLIENT_FRONTEND_BASE_URL 构建链接
+                const clientLink = `${CLIENT_FRONTEND_BASE_URL}/client-selection.html?sessionId=${currentSessionId}`;
+                copyClientLinkBtn.dataset.link = clientLink;
+                copyClientLinkBtn.style.display = 'block';
 
-                // 可选：清空当前会话数据以开始新会话
                 currentSessionId = '';
                 uploadedPhotoList = [];
                 renderUploadedPhotos();
