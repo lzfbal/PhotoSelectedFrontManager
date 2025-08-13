@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ====================================================================
+    // 从全局配置对象中获取配置
     const appConfig = window.appConfig;
 
     const BACKEND_URL = appConfig.BACKEND_URL;
@@ -66,12 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'photo-item portfolio-item'; // 复用 photo-item 样式
             itemDiv.innerHTML = `
-                <img src="${item.url}" alt="${item.title || '作品'}">
-                <div class="portfolio-info">
-                    <p class="portfolio-title" title="${item.title || '作品'}">${item.title || '作品'}</p>
-                    <p class="portfolio-category">${item.category}</p>
-                </div>
-                <button class="delete-photo-btn delete-portfolio-btn" data-item-id="${item.id}">X</button>
+                
+                
+                    ${item.title || '作品'}
+                    ${item.category}
+                
+                X
             `;
             uploadedPortfolioItemsContainer.appendChild(itemDiv);
         });
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 填充分类选择器和筛选器 ---
     function populateCategoryDropdowns(items) {
-        const categories = new Set(items.map(item => item.category).filter(cat => cat)); // 过滤空字符串
+        const categories = new Set(items.map(item => item.category).filter(cat => cat));
         
         // 清空并填充上传部分的分类选择器
         portfolioCategorySelect.innerHTML = '<option value="">-- 请选择或添加新分类 --</option>';
@@ -89,7 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
             option.textContent = category;
             portfolioCategorySelect.appendChild(option);
         });
-        portfolioCategorySelect.innerHTML += '<option value="addNew">添加新分类...</option>';
+        
+        // *** 关键修改：使用 createElement 和 appendChild 添加 "添加新分类..." 选项 ***
+        const addNewOption = document.createElement('option');
+        addNewOption.value = 'addNew';
+        addNewOption.textContent = '添加新分类...';
+        portfolioCategorySelect.appendChild(addNewOption);
+        // *******************************************************************
 
         // 清空并填充管理部分的分类筛选器
         portfolioAdminCategoryFilter.innerHTML = '<option value="all">所有分类</option>';
