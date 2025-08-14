@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ====================================================================
-    // DEBUG 选项: true 为本地开发环境 (localhost), false 为生产环境
     const appConfig = window.appConfig;
-
     const BACKEND_URL = appConfig.BACKEND_URL;
 
     const portfolioGrid = document.getElementById('portfolioGrid');
@@ -11,16 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const portfolioErrorText = portfolioErrorMessage.querySelector('.error-text');
     const portfolioRetryButton = document.getElementById('portfolioRetryButton');
     const noPortfolioItemsMessage = document.getElementById('noPortfolioItemsMessage');
-    const portfolioCategoryFilter = document.getElementById('portfolioCategoryFilter');
+    // 更改这里：从 select 元素改为 div 容器
+    const portfolioCategoryTags = document.getElementById('portfolioCategoryTags'); 
 
-    // 大图预览模态框元素
     const imageModal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
     const closeButton = document.querySelector('.close-button');
 
-    let allPortfolioItems = []; // 存储所有作品数据
+    let allPortfolioItems = [];
 
-    // --- 辅助函数 ---
     function showPortfolioMessage(element, message = '') {
         portfolioLoadingMessage.style.display = 'none';
         portfolioErrorMessage.style.display = 'none';
@@ -54,14 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'portfolio-item-card';
             itemDiv.innerHTML = `
-                <img src="${item.url}" alt="${item.title || '作品'}" class="portfolio-card-image">
+                <img class="portfolio-card-image" src="${item.url}" alt="${item.title || '作品'}">
                 <div class="portfolio-card-info">
                     <h4 class="portfolio-card-title">${item.title || '作品'}</h4>
                     <p class="portfolio-card-category">${item.category}</p>
-                    <p class="portfolio-card-description">${item.description}</p>
+                    <p class="portfolio-card-description">${item.description || ''}</p>
                 </div>
             `;
-            // 点击图片预览大图
             itemDiv.querySelector('.portfolio-card-image').addEventListener('click', () => {
                 previewImage(item.url, itemsToRender.map(i => i.url));
             });
@@ -69,33 +64,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 填充分类筛选器 ---
+    // --- 填充分类标签 ---
     function populateCategoryFilter(items) {
-        const categories = new Set(items.map(item => item.category));
-        portfolioCategoryFilter.innerHTML = '<option value="all">所有分类</option>'; // 总是保留“所有分类”选项
+        const categories = new Set(items.map(item => item.category).filter(cat => cat));
+        portfolioCategoryTags.innerHTML = ''; // 清空之前的标签
+
+        // 添加“所有分类”标签
+        const allButton = document.createElement('button');
+        allButton.className = 'category-tag-button active'; // 默认选中“所有分类”
+        allButton.dataset.category = 'all';
+        allButton.textContent = '所有分类';
+        portfolioCategoryTags.appendChild(allButton);
+
         categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category;
-            portfolioCategoryFilter.appendChild(option);
+            const tagButton = document.createElement('button');
+            tagButton.className = 'category-tag-button';
+            tagButton.dataset.category = category;
+            tagButton.textContent = category;
+            portfolioCategoryTags.appendChild(tagButton);
         });
     }
 
-    // --- 加载作品集 ---
-    async function loadPortfolio(category = 'all') {
+    async function loadPortfolio() {
         showPortfolioMessage(portfolioLoadingMessage);
         try {
-            const queryParams = new URLSearchParams();
-            if (category !== 'all') {
-                queryParams.append('category', category);
-            }
-            
-            const response = await fetch(`${BACKEND_URL}/portfolio?${queryParams.toString()}`);
+            // 首次加载不带分类参数，获取所有作品
+            const response = await fetch(`${BACKEND_URL}/portfolio`);
             const data = await response.json();
 
             if (data.code === 0) {
                 allPortfolioItems = data.portfolioItems; // 存储所有作品
-                populateCategoryFilter(allPortfolioItems); // 更新分类筛选器
+                populateCategoryFilter(allPortfolioItems); // 填充分类标签
                 renderPortfolioItems(allPortfolioItems); // 默认渲染所有作品
             } else {
                 showPortfolioMessage(portfolioErrorMessage, data.message || '获取作品集失败，请稍后再试。');
@@ -108,23 +107,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 预览图片 ---
     function previewImage(currentUrl, allUrls) {
         modalImage.src = currentUrl;
         imageModal.style.display = 'block';
     }
 
     // --- 事件监听器 ---
-    portfolioRetryButton.addEventListener('click', () => loadPortfolio(portfolioCategoryFilter.value));
+    portfolioRetryButton.addEventListener('click', () => loadPortfolio()); // 重试时重新加载所有作品
 
-    portfolioCategoryFilter.addEventListener('change', (e) => {
-        const selectedCategory = e.target.value;
-        // 重新渲染，但只筛选当前已加载的所有作品，避免重新发起网络请求
-        if (selectedCategory === 'all') {
-            renderPortfolioItems(allPortfolioItems);
-        } else {
-            const filtered = allPortfolioItems.filter(item => item.category === selectedCategory);
-            renderPortfolioItems(filtered);
+    // 监听分类标签的点击事件
+    portfolioCategoryTags.addEventListener('click', (e) => {
+        if (e.target.classList.contains('category-tag-button')) {
+            // 移除所有标签的 active 状态
+            document.querySelectorAll('.category-tag-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // 给被点击的标签添加 active 状态
+            e.target.classList.add('active');
+
+            const selectedCategory = e.target.dataset.category;
+            let filtered = [];
+            if (selectedCategory === 'all') {
+                filtered = allPortfolioItems;
+            } else {
+                filtered = allPortfolioItems.filter(item => item.category === selectedCategory);
+            }
+            renderPortfolioItems(filtered); // 渲染筛选后的作品
         }
     });
 
@@ -138,6 +146,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 初始加载作品集
     loadPortfolio();
 });

@@ -1525,3 +1525,56 @@ textarea#portfolioDescriptionInput {
         font-size: 0.85em;
     }
 }
+
+/* 新增：分类标签容器样式 */
+.category-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* 标签之间的间距 */
+    margin-top: 10px;
+}
+
+/* 新增：分类标签按钮样式 */
+.category-tag-button {
+    background-color: #e0e0e0; /* 默认标签背景色 */
+    color: #333;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px; /* 圆角，使其看起来像药丸 */
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s ease;
+}
+
+.category-tag-button:hover {
+    background-color: #c0c0c0;
+    transform: translateY(-1px);
+}
+
+.category-tag-button.active {
+    background-color: #007bff; /* 选中标签的背景色 */
+    color: white;
+    font-weight: bold;
+}
+
+.category-tag-button.active:hover {
+    background-color: #0056b3;
+}
+
+/* 响应式调整 for portfolio-filter-controls */
+@media (max-width: 768px) {
+    .portfolio-filter-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px;
+    }
+    .portfolio-filter-controls h3 {
+        width: 100%;
+        text-align: left;
+    }
+    .category-tags-container {
+        width: 100%;
+        justify-content: flex-start; /* 小屏幕上标签左对齐 */
+    }
+}

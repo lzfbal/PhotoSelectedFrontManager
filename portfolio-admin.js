@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 渲染作品集项目 ---
     function renderPortfolioItems(itemsToRender) {
         uploadedPortfolioItemsContainer.innerHTML = '';
         if (itemsToRender.length === 0) {
@@ -66,12 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'photo-item portfolio-item'; // 复用 photo-item 样式
             itemDiv.innerHTML = `
-                
-                
-                    ${item.title || '作品'}
-                    ${item.category}
-                
-                X
+                <img src="${item.url}" alt="${item.title || '作品'}">
+                <div class="portfolio-info">
+                    <p class="portfolio-title">${item.title || '作品'}</p>
+                    <p class="portfolio-category">${item.category}</p>
+                </div>
+                <!-- 确保删除按钮有正确的 class 和 data-item-id -->
+                <button class="delete-photo-btn delete-portfolio-btn" data-item-id="${item.id}">X</button>
             `;
             uploadedPortfolioItemsContainer.appendChild(itemDiv);
         });
@@ -218,8 +218,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 删除作品集项目 ---
     uploadedPortfolioItemsContainer.addEventListener('click', async (e) => {
+        // 确保点击的是删除按钮
         if (e.target.classList.contains('delete-portfolio-btn')) {
-            const itemIdToDelete = e.target.dataset.itemId;
+            const itemIdToDelete = e.target.dataset.itemId; // 获取作品 ID
             if (!itemIdToDelete) {
                 showPortfolioStatus('作品ID缺失，无法删除。', true);
                 return;
