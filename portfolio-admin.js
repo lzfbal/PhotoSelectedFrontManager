@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 检查用户是否已登录
+    if (!localStorage.getItem('auth')) {
+        window.location.href = 'login.html'; // 重定向到登录页面
+        return; // 阻止页面继续加载
+    }
+
     // 从全局配置对象中获取配置
     const appConfig = window.appConfig;
 
